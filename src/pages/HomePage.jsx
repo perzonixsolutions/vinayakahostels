@@ -1,6 +1,7 @@
 // HPI 1.7-G
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform, useSpring, useInView } from 'framer-motion';
+import React from 'react';
+// eslint-disable-next-line no-unused-vars
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Image } from '@/components/ui/image';
 import { Button } from '@/components/ui/button';
@@ -31,7 +32,7 @@ export default function HomePage() {
         {
             icon: MapPin,
             title: 'Prime Location',
-            description: 'Close to colleges, hospitals, and public transportation'
+            description: '2km to SRM University, 5km to Guntur Railway Station, 10km to Guntur Bus Station'
         }
     ];
 
@@ -40,7 +41,7 @@ export default function HomePage() {
         'Experienced and caring management team',
         'Transparent pricing with no hidden costs',
         'Regular maintenance and housekeeping',
-        'Separate floors for boys and girls',
+        'Separate floors for Seniors and Juniors',
         'Study-friendly environment'
     ];
 
@@ -71,7 +72,7 @@ export default function HomePage() {
                     <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/40 to-background z-10" />
                     <Image
                         src="https://static.wixstatic.com/media/0e16eb_78a284633f3d4781a42b1c3833d9d389~mv2.png?originWidth=1920&originHeight=1024"
-                        alt="Serene hostel environment"
+                        alt="Vinayaka hostel environment"
                         className="w-full h-full object-cover opacity-40"
                         width={1920}
                     />
@@ -155,7 +156,7 @@ export default function HomePage() {
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="font-heading text-lg text-foreground">Admissions Open</p>
-                                            <p className="font-paragraph text-sm text-foreground/60">Academic Year 2024-25</p>
+                                            <p className="font-paragraph text-sm text-foreground/60">Academic Year 2026-27</p>
                                         </div>
                                         <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                                             <ArrowRight className="w-5 h-5 text-primary" />

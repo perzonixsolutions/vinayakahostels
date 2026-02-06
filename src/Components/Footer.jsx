@@ -26,7 +26,7 @@ export default function Footer() {
                     {/* About Section */}
                     <div className="space-y-6">
                         <h3 className="font-heading text-3xl text-white">
-                            Serenity Hostel
+                            Vinayaka Hostels
                         </h3>
                         <p className="font-paragraph text-base text-white/80 leading-relaxed">
                             Your trusted home away from home. We provide a safe, clean, and comfortable living environment for students.
@@ -109,7 +109,7 @@ export default function Footer() {
                             <li className="flex items-start gap-3">
                                 <MapPin className="w-5 h-5 text-primary flex-shrink-0 mt-1" />
                                 <span className="font-paragraph text-base text-white/80">
-                                    123 University Road, Student District, City 560001
+                                    Kuragallu, Mangalagiri, Andhra Pradesh
                                 </span>
                             </li>
                             <li className="flex items-center gap-3">
@@ -124,10 +124,10 @@ export default function Footer() {
                             <li className="flex items-center gap-3">
                                 <Mail className="w-5 h-5 text-primary flex-shrink-0" />
                                 <a
-                                    href="mailto:info@serenityhostel.com"
+                                    href="mailto:vinayakahostels@gmail.com"
                                     className="font-paragraph text-base text-white/80 hover:text-primary transition-colors duration-200"
                                 >
-                                    info@serenityhostel.com
+                                    vinayakahostels@gmail.com
                                 </a>
                             </li>
                         </ul>
@@ -138,7 +138,7 @@ export default function Footer() {
                 <div className="pt-8 border-t border-white/10">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <p className="font-paragraph text-sm text-white/60 text-center md:text-left">
-                            © {new Date().getFullYear()} Serenity Hostel. All rights reserved.
+                            © {new Date().getFullYear()} Vinayaka Hostels. All rights reserved.
                         </p>
                         <div className="flex gap-6">
                             <Link
@@ -152,6 +152,12 @@ export default function Footer() {
                                 className="font-paragraph text-sm text-white/60 hover:text-primary transition-colors duration-200"
                             >
                                 Terms of Service
+                            </Link>
+                            <Link
+                                to="/admin"
+                                className="font-paragraph text-sm text-white/60 hover:text-primary transition-colors duration-200"
+                            >
+                                Admin Login
                             </Link>
                         </div>
                     </div>

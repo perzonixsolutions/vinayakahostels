@@ -29,28 +29,27 @@ export default function Header() {
                     {/* Logo */}
                     <Link to="/" className="flex items-center">
                         <h1 className="font-heading text-3xl md:text-4xl text-primary">
-                            Serenity Hostel
+                            Vinayaka PG Hostels
                         </h1>
                     </Link>
 
-                    {/* Desktop Navigation */}
-                    <nav className="hidden lg:flex items-center gap-8">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.path}
-                                to={link.path}
-                                className={`font-paragraph text-base transition-colors duration-200 ${isActive(link.path)
-                                    ? 'text-primary font-medium'
-                                    : 'text-foreground/70 hover:text-primary'
-                                    }`}
-                            >
-                                {link.label}
-                            </Link>
-                        ))}
-                    </nav>
+                    {/* Desktop Navigation & CTA */}
+                    <div className="hidden lg:flex items-center gap-8">
+                        <nav className="flex items-center gap-8">
+                            {navLinks.map((link) => (
+                                <Link
+                                    key={link.path}
+                                    to={link.path}
+                                    className={`font-paragraph text-base transition-colors duration-200 ${isActive(link.path)
+                                        ? 'text-primary font-medium'
+                                        : 'text-foreground/70 hover:text-primary'
+                                        }`}
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                        </nav>
 
-                    {/* CTA Button - Desktop */}
-                    <div className="hidden lg:block">
                         <Link to="/contact">
                             <Button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 font-paragraph font-medium">
                                 Book a Visit
