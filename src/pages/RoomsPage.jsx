@@ -11,6 +11,7 @@ import { BaseCrudService } from '@/integrations';
 export default function RoomsPage() {
     const [rooms, setRooms] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const API_URL = 'http://localhost:5001/api/hostels/public';
 
     useEffect(() => {
         loadRooms();
@@ -18,8 +19,26 @@ export default function RoomsPage() {
 
     const loadRooms = async () => {
         try {
-            const result = await BaseCrudService.getAll('roomtypes');
-            setRooms(result.items);
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error('Failed to fetch rooms');
+            const data = await response.json();
+            // Map backend data to frontend structure if necessary, or ensure frontend uses backend keys
+            // Backend returns: id, name, image_url, price_monthly, etc.
+            // Frontend currently expects: _id, roomName, roomPhotos, pricePerMonth, etc.
+            // Let's map it here to minimize frontend template changes
+            const mappedRooms = data.map(room => ({
+                _id: room.id,
+                roomName: room.name || `Room ${room.room_number}`,
+                availabilityStatus: room.current_occupancy >= room.capacity ? 'Full' : 'Available',
+                description: room.description,
+                capacity: room.capacity,
+                amenities: room.amenities,
+                pricePerMonth: room.price_monthly,
+                pricePerSemester: room.price_semester,
+                roomPhotos: room.image_url,
+                // Add any other mapped fields
+            }));
+            setRooms(mappedRooms);
         } catch (error) {
             console.error('Failed to load rooms:', error);
         } finally {

@@ -13,12 +13,29 @@ export default function RoomDetailPage() {
     const { id } = useParams();
     const [room, setRoom] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const API_URL = 'http://localhost:5001/api/hostels/public';
 
     useEffect(() => {
         const loadRoom = async () => {
             try {
-                const data = await BaseCrudService.getById('roomtypes', id);
-                setRoom(data);
+                // Determine if we are loading real data by ID (number) or mock data (string like '1a')
+                // But we are replacing fully.
+                const response = await fetch(`${API_URL}/${id}`);
+                if (!response.ok) throw new Error('Failed to fetch room');
+                const data = await response.json();
+
+                const mappedRoom = {
+                    _id: data.id,
+                    roomName: data.name || `Room ${data.room_number}`,
+                    availabilityStatus: data.current_occupancy >= data.capacity ? 'Full' : 'Available',
+                    description: data.description,
+                    capacity: data.capacity,
+                    amenities: data.amenities,
+                    pricePerMonth: data.price_monthly,
+                    pricePerSemester: data.price_semester,
+                    roomPhotos: data.image_url,
+                };
+                setRoom(mappedRoom);
             } catch (error) {
                 console.error('Failed to load room:', error);
             } finally {

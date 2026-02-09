@@ -26,11 +26,23 @@ export default function AdminBlockDetailPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // List of common amenities to help user
+    const COMMON_AMENITIES = [
+        "AC", "Wi-Fi", "Attached Bathroom", "Geyser", "Study Table", "Wardrobe", "Balcony"
+    ];
+
     // Form State
     const [newRoom, setNewRoom] = useState({
         room_number: '',
         capacity: 3,
-        type: 'Non-AC'
+        type: 'Non-AC',
+        name: '',
+        price_monthly: '',
+        price_semester: '',
+        image_url: '',
+        description: '',
+        amenities: '',
+        is_visible: true
     });
 
     useEffect(() => {
@@ -63,10 +75,28 @@ export default function AdminBlockDetailPage() {
         setIsSubmitting(true);
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`${API_URL}/hostels/rooms`, { ...newRoom, block_id: id }, {
+            await axios.post(`${API_URL}/hostels/rooms`, {
+                ...newRoom,
+                block_id: id,
+                // Ensure numbers are numbers
+                price_monthly: newRoom.price_monthly ? parseInt(newRoom.price_monthly) : null,
+                price_semester: newRoom.price_semester ? parseInt(newRoom.price_semester) : null,
+            }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setNewRoom({ room_number: '', capacity: 3, type: 'Non-AC' });
+
+            setNewRoom({
+                room_number: '',
+                capacity: 3,
+                type: 'Non-AC',
+                name: '',
+                price_monthly: '',
+                price_semester: '',
+                image_url: '',
+                description: '',
+                amenities: '',
+                is_visible: true
+            });
             setIsDialogOpen(false);
             fetchBlockDetails();
         } catch (error) {
@@ -101,14 +131,14 @@ export default function AdminBlockDetailPage() {
                             Add Room
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                             <DialogTitle>Add New Room</DialogTitle>
                         </DialogHeader>
                         <form onSubmit={handleAddRoom} className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="room_number">Room Number</Label>
+                                    <Label htmlFor="room_number">Room Number *</Label>
                                     <Input
                                         id="room_number"
                                         value={newRoom.room_number}
@@ -118,7 +148,19 @@ export default function AdminBlockDetailPage() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="capacity">Capacity</Label>
+                                    <Label htmlFor="name">Room Name/Title (Public)</Label>
+                                    <Input
+                                        id="name"
+                                        value={newRoom.name}
+                                        onChange={(e) => setNewRoom({ ...newRoom, name: e.target.value })}
+                                        placeholder="e.g. Premium Single Room"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="capacity">Capacity *</Label>
                                     <Input
                                         id="capacity"
                                         type="number"
@@ -128,19 +170,87 @@ export default function AdminBlockDetailPage() {
                                         required
                                     />
                                 </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="type">Room Type *</Label>
+                                    <select
+                                        id="type"
+                                        className="w-full p-2 border rounded-md"
+                                        value={newRoom.type}
+                                        onChange={(e) => setNewRoom({ ...newRoom, type: e.target.value })}
+                                    >
+                                        <option value="Non-AC">Non-AC</option>
+                                        <option value="AC">AC</option>
+                                        <option value="Special">Special</option>
+                                    </select>
+                                </div>
                             </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="price_monthly">Monthly Rent (₹)</Label>
+                                    <Input
+                                        id="price_monthly"
+                                        type="number"
+                                        value={newRoom.price_monthly}
+                                        onChange={(e) => setNewRoom({ ...newRoom, price_monthly: e.target.value })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="price_semester">Semester Rent (₹)</Label>
+                                    <Input
+                                        id="price_semester"
+                                        type="number"
+                                        value={newRoom.price_semester}
+                                        onChange={(e) => setNewRoom({ ...newRoom, price_semester: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+
                             <div className="space-y-2">
-                                <Label htmlFor="type">Room Type</Label>
-                                <select
-                                    id="type"
-                                    className="w-full p-2 border rounded-md"
-                                    value={newRoom.type}
-                                    onChange={(e) => setNewRoom({ ...newRoom, type: e.target.value })}
-                                >
-                                    <option value="Non-AC">Non-AC</option>
-                                    <option value="AC">AC</option>
-                                </select>
+                                <Label htmlFor="image_url">Image URL</Label>
+                                <Input
+                                    id="image_url"
+                                    value={newRoom.image_url}
+                                    onChange={(e) => setNewRoom({ ...newRoom, image_url: e.target.value })}
+                                    placeholder="https://..."
+                                />
                             </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="description">Description</Label>
+                                <textarea
+                                    id="description"
+                                    className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                    value={newRoom.description}
+                                    onChange={(e) => setNewRoom({ ...newRoom, description: e.target.value })}
+                                    placeholder="Detailed description of the room..."
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="amenities">Amenities (Comma separated)</Label>
+                                <Input
+                                    id="amenities"
+                                    value={newRoom.amenities}
+                                    onChange={(e) => setNewRoom({ ...newRoom, amenities: e.target.value })}
+                                    placeholder="Wi-Fi, AC, Attached Bathroom..."
+                                />
+                                <div className="text-xs text-gray-500 mt-1">
+                                    Common: {COMMON_AMENITIES.join(', ')}
+                                </div>
+                            </div>
+
+                            <div className="flex items-center space-x-2">
+                                <input
+                                    type="checkbox"
+                                    id="is_visible"
+                                    checked={newRoom.is_visible}
+                                    onChange={(e) => setNewRoom({ ...newRoom, is_visible: e.target.checked })}
+                                    className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                />
+                                <Label htmlFor="is_visible" className="cursor-pointer">Show on Public Website</Label>
+                            </div>
+
                             <DialogFooter>
                                 <DialogClose asChild>
                                     <Button type="button" variant="outline">Cancel</Button>
@@ -157,12 +267,22 @@ export default function AdminBlockDetailPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {rooms.map(room => (
                     <div key={room.id} className={`p-4 rounded-lg border ${room.current_occupancy >= room.capacity
-                            ? 'bg-red-50 border-red-200'
-                            : 'bg-white border-muted-grey'
+                        ? 'bg-red-50 border-red-200'
+                        : 'bg-white border-muted-grey'
                         }`}>
                         <div className="flex justify-between items-start mb-2">
-                            <h3 className="font-bold text-lg">{room.room_number}</h3>
-                            <span className="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600">{room.type}</span>
+                            <div>
+                                <h3 className="font-bold text-lg">{room.room_number}</h3>
+                                {room.name && <p className="text-xs text-gray-500 truncate max-w-[150px]">{room.name}</p>}
+                            </div>
+                            <div className="flex flex-col items-end">
+                                <span className="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600 mb-1">{room.type}</span>
+                                {room.is_visible ? (
+                                    <span className="text-[10px] text-green-600 bg-green-50 px-1 rounded border border-green-200">Public</span>
+                                ) : (
+                                    <span className="text-[10px] text-gray-400 bg-gray-50 px-1 rounded border border-gray-200">Hidden</span>
+                                )}
+                            </div>
                         </div>
                         <div className="flex items-center text-sm text-gray-600 mt-2">
                             <Users size={16} className="mr-2" />
