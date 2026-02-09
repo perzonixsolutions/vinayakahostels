@@ -20,6 +20,7 @@ import AdminStudentsPage from './pages/admin/AdminStudentsPage'
 import AdminAddStudentPage from './pages/admin/AdminAddStudentPage'
 import AdminHostelsPage from './pages/admin/AdminHostelsPage'
 import AdminBlockDetailPage from './pages/admin/AdminBlockDetailPage'
+import AdminMenuPage from './pages/admin/AdminMenuPage'
 
 import { ScrollToTop } from './lib/scroll-to-top'
 
@@ -52,6 +53,7 @@ function App() {
             <Route path="students/add" element={<AdminAddStudentPage />} />
             <Route path="hostels" element={<AdminHostelsPage />} />
             <Route path="hostels/block/:id" element={<AdminBlockDetailPage />} />
+            <Route path="menu" element={<AdminMenuPage />} />
           </Route>
         </Routes>
       </Router>

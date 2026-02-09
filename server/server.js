@@ -15,6 +15,7 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/students', require('./routes/students'));
 app.use('/api/hostels', require('./routes/hostels'));
+app.use('/api/menu', require('./routes/menu'));
 
 // Health Check
 app.get('/', (req, res) => {

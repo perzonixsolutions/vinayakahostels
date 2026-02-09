@@ -29,7 +29,8 @@ export default function AdminLayout() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [expandedMenus, setExpandedMenus] = useState({
         students: true,
-        hostels: true
+        hostels: true,
+        menu: true
     });
     const [blocks, setBlocks] = useState([]);
     const location = useLocation();
@@ -97,6 +98,37 @@ export default function AdminLayout() {
                             <Home size={20} />
                             <span className="font-medium">Dashboard</span>
                         </Link>
+
+                        {/* Mess Menu Section */}
+                        <div>
+                            <button
+                                onClick={() => toggleMenu('menu')}
+                                className="w-full flex items-center justify-between px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                            >
+                                <div className="flex items-center space-x-3">
+                                    <Menu size={20} />
+                                    <span className="font-medium">Mess Menu</span>
+                                </div>
+                                {expandedMenus.menu ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                            </button>
+
+                            {expandedMenus.menu && (
+                                <div className="ml-4 pl-4 border-l-2 border-gray-100 space-y-1 mt-1">
+                                    {['Breakfast', 'Lunch', 'Snacks', 'Dinner'].map(meal => (
+                                        <Link
+                                            key={meal}
+                                            to={`/admin/menu?meal=${meal}`}
+                                            className={`block px-4 py-2 text-sm rounded-lg ${location.search === `?meal=${meal}`
+                                                ? 'bg-primary/10 text-primary'
+                                                : 'text-gray-500 hover:text-gray-900'
+                                                }`}
+                                        >
+                                            {meal}
+                                        </Link>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
 
                         {/* Students Section */}
                         <div>
