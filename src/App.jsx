@@ -15,6 +15,11 @@ import RulesPage from './pages/RulesPage'
 import TestimonialsPage from './pages/TestimonialsPage'
 import AdminLoginPage from './pages/AdminLoginPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
+import AdminLayout from './components/AdminLayout'
+import AdminStudentsPage from './pages/admin/AdminStudentsPage'
+import AdminAddStudentPage from './pages/admin/AdminAddStudentPage'
+import AdminHostelsPage from './pages/admin/AdminHostelsPage'
+import AdminBlockDetailPage from './pages/admin/AdminBlockDetailPage'
 
 import { ScrollToTop } from './lib/scroll-to-top'
 
@@ -39,7 +44,15 @@ function App() {
           <Route path="/rules" element={<RulesPage />} />
           <Route path="/testimonials" element={<TestimonialsPage />} />
           <Route path="/admin" element={<AdminLoginPage />} />
-          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+
+          {/* Admin Routes with Layout */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<AdminDashboardPage />} />
+            <Route path="students" element={<AdminStudentsPage />} />
+            <Route path="students/add" element={<AdminAddStudentPage />} />
+            <Route path="hostels" element={<AdminHostelsPage />} />
+            <Route path="hostels/block/:id" element={<AdminBlockDetailPage />} />
+          </Route>
         </Routes>
       </Router>
     </>

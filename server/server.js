@@ -13,6 +13,8 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/students', require('./routes/students'));
+app.use('/api/hostels', require('./routes/hostels'));
 
 // Health Check
 app.get('/', (req, res) => {
