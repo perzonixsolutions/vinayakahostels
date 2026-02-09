@@ -57,6 +57,19 @@ function initializeDatabase() {
             join_date TEXT,
             status TEXT DEFAULT 'Active',
             FOREIGN KEY(room_id) REFERENCES rooms(id)
+        )`);
+
+        // Create Contacts Table
+        db.run(`CREATE TABLE IF NOT EXISTS contacts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            message TEXT NOT NULL,
+            preferred_date TEXT,
+            submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            status TEXT DEFAULT 'new',
+            previous_status TEXT
         )`, (err) => {
             if (err) {
                 console.error('Error creating tables:', err.message);

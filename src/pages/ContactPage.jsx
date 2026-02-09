@@ -25,8 +25,17 @@ export default function ContactPage() {
         setSubmitStatus('idle');
 
         try {
-            // Simulate form submission
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            const response = await fetch('http://localhost:5001/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to send message');
+            }
 
             setSubmitStatus('success');
             setFormData({
@@ -36,7 +45,8 @@ export default function ContactPage() {
                 message: '',
                 preferredDate: ''
             });
-        } catch {
+        } catch (error) {
+            console.error('Error submitting form:', error);
             setSubmitStatus('error');
         } finally {
             setIsSubmitting(false);

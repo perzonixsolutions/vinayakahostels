@@ -10,7 +10,8 @@ import {
     ChevronRight,
     LogOut,
     Menu,
-    X
+    X,
+    MessageSquare
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AuthService from '@/integrations/AuthService';
@@ -30,7 +31,8 @@ export default function AdminLayout() {
     const [expandedMenus, setExpandedMenus] = useState({
         students: true,
         hostels: true,
-        menu: true
+        menu: true,
+        messages: true
     });
     const [blocks, setBlocks] = useState([]);
     const location = useLocation();
@@ -98,6 +100,52 @@ export default function AdminLayout() {
                             <Home size={20} />
                             <span className="font-medium">Dashboard</span>
                         </Link>
+
+                        {/* Messages Section */}
+                        <div>
+                            <button
+                                onClick={() => toggleMenu('messages')}
+                                className="w-full flex items-center justify-between px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
+                            >
+                                <div className="flex items-center space-x-3">
+                                    <MessageSquare size={20} />
+                                    <span className="font-medium">Messages</span>
+                                </div>
+                                {expandedMenus.messages ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+                            </button>
+
+                            {expandedMenus.messages && (
+                                <div className="ml-4 pl-4 border-l-2 border-gray-100 space-y-1 mt-1">
+                                    <Link
+                                        to="/admin/messages?status=new"
+                                        className={`block px-4 py-2 text-sm rounded-lg ${location.search === '?status=new'
+                                            ? 'bg-primary/10 text-primary'
+                                            : 'text-gray-500 hover:text-gray-900'
+                                            }`}
+                                    >
+                                        New
+                                    </Link>
+                                    <Link
+                                        to="/admin/messages?status=read"
+                                        className={`block px-4 py-2 text-sm rounded-lg ${location.search === '?status=read'
+                                            ? 'bg-primary/10 text-primary'
+                                            : 'text-gray-500 hover:text-gray-900'
+                                            }`}
+                                    >
+                                        Read
+                                    </Link>
+                                    <Link
+                                        to="/admin/messages?status=deleted"
+                                        className={`block px-4 py-2 text-sm rounded-lg ${location.search === '?status=deleted'
+                                            ? 'bg-red-50 text-red-600'
+                                            : 'text-gray-500 hover:text-gray-900'
+                                            }`}
+                                    >
+                                        Recently Deleted
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
 
                         {/* Mess Menu Section */}
                         <div>
