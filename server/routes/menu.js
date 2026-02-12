@@ -15,13 +15,17 @@ router.get('/', (req, res) => {
 router.post('/', verifyToken, (req, res) => {
     const { meal_type, name, description, price, image_url, is_available, day_of_week } = req.body;
 
-    const sql = `INSERT INTO menu_items (meal_type, name, description, price, image_url, is_available, day_of_week) 
+    // Map frontend fields (image_url, is_available) to DB columns (image, is_active)
+    const sql = `INSERT INTO menu_items (meal_type, name, description, price, image, is_active, day_of_week) 
                  VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
     const params = [meal_type, name, description, price, image_url, is_available ? 1 : 0, day_of_week];
 
     db.run(sql, params, function (err) {
-        if (err) return res.status(500).json({ message: 'Error adding menu item', error: err.message });
+        if (err) {
+            console.error('Error adding menu item:', err.message);
+            return res.status(500).json({ message: 'Error adding menu item', error: err.message });
+        }
         res.status(201).json({ id: this.lastID, message: 'Menu item added successfully' });
     });
 });

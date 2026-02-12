@@ -70,6 +70,18 @@ function initializeDatabase() {
             submitted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             status TEXT DEFAULT 'new',
             previous_status TEXT
+        )`);
+
+        // Create Menu Items Table
+        db.run(`CREATE TABLE IF NOT EXISTS menu_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            description TEXT,
+            price TEXT,
+            meal_type TEXT,
+            day_of_week TEXT,
+            image TEXT,
+            is_active BOOLEAN DEFAULT 1
         )`, (err) => {
             if (err) {
                 console.error('Error creating tables:', err.message);

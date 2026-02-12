@@ -4,8 +4,9 @@ import { Image } from '@/components/ui/image';
 import { Clock } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { BaseCrudService } from '@/integrations';
+import axios from 'axios';
 
+const API_URL = 'http://localhost:5001/api';
 
 export default function DiningPage() {
     const [menuItems, setMenuItems] = useState([]);
@@ -17,8 +18,23 @@ export default function DiningPage() {
 
     const loadMenu = async () => {
         try {
-            const result = await BaseCrudService.getAll('diningmenu');
-            setMenuItems(result.items);
+            const response = await axios.get(`${API_URL}/menu`);
+            const data = response.data;
+
+            // Map backend fields to frontend expectations
+            const mappedItems = data.map(item => ({
+                _id: item.id,
+                mealType: item.meal_type || 'Other',
+                menuItemName: item.name,
+                description: item.description,
+                dishImage: item.image,
+                dayOfWeek: item.day_of_week,
+                // Provide default times based on meal type strictly for display
+                ...getDefaultServingTime(item.meal_type),
+                price: item.price
+            }));
+
+            setMenuItems(mappedItems);
         } catch (error) {
             console.error('Failed to load menu:', error);
         } finally {
@@ -26,8 +42,18 @@ export default function DiningPage() {
         }
     };
 
+    const getDefaultServingTime = (type) => {
+        switch (type) {
+            case 'Breakfast': return { servingStartTime: '7:30 AM', servingEndTime: '9:30 AM' };
+            case 'Lunch': return { servingStartTime: '12:30 PM', servingEndTime: '2:30 PM' };
+            case 'Snacks': return { servingStartTime: '5:00 PM', servingEndTime: '6:00 PM' };
+            case 'Dinner': return { servingStartTime: '7:30 PM', servingEndTime: '9:30 PM' };
+            default: return { servingStartTime: '', servingEndTime: '' };
+        }
+    };
+
     const groupedMenu = menuItems.reduce((acc, item) => {
-        const mealType = item.mealType || 'Other';
+        const mealType = item.mealType;
         if (!acc[mealType]) {
             acc[mealType] = [];
         }
@@ -128,7 +154,11 @@ export default function DiningPage() {
                     </Motion.div>
 
                     <div className="min-h-[400px]">
-                        {isLoading ? null : menuItems.length > 0 ? (
+                        {isLoading ? (
+                            <div className="text-center py-20">
+                                <p className="font-paragraph text-lg text-foreground/60">Loading menu...</p>
+                            </div>
+                        ) : menuItems.length > 0 ? (
                             <div className="space-y-16">
                                 {sortedMealTypes.map((mealType) => (
                                     <Motion.div
@@ -195,7 +225,7 @@ export default function DiningPage() {
                         ) : (
                             <div className="text-center py-20">
                                 <p className="font-paragraph text-lg text-foreground/60">
-                                    Menu information coming soon
+                                    No menu items available at the moment.
                                 </p>
                             </div>
                         )}
@@ -234,7 +264,7 @@ export default function DiningPage() {
                             },
                             {
                                 title: 'Feedback Welcome',
-                                description: 'We value your feedback on food quality and menu variety. Monthly menu reviews are conducted with residents.'
+                                description: 'We use your feedback on food quality and menu variety. Monthly menu reviews are conducted with residents.'
                             }
                         ].map((policy, index) => (
                             <Motion.div

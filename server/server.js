@@ -18,6 +18,7 @@ app.use('/api/hostels', require('./routes/hostels'));
 app.use('/api/hostels', require('./routes/hostels'));
 app.use('/api/menu', require('./routes/menu'));
 app.use('/api/contact', require('./routes/contact'));
+app.use('/api/dashboard', require('./routes/dashboard'));
 
 // Health Check
 app.get('/', (req, res) => {
