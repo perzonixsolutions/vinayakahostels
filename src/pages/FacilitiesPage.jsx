@@ -132,10 +132,6 @@ export default function FacilitiesPage() {
                                 description: 'Complete coverage of common areas and entry points for your safety'
                             },
                             {
-                                title: 'Biometric Access',
-                                description: 'Secure entry system with biometric authentication'
-                            },
-                            {
                                 title: 'Fire Safety',
                                 description: 'Fire extinguishers, smoke detectors, and emergency exits on all floors'
                             },
