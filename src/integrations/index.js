@@ -237,7 +237,25 @@ const mockData = {
             distanceFromHostel: '2km',
             description: 'Main road to SRM University',
             address: 'University Road',
-            googleMapsUrl: 'https://maps.app.goo.gl/QvdYmWJWJqv7z3tMA',
+            googleMapsUrl: 'https://maps.app.goo.gl/VbrCezxc4pQ34zWr9',
+        },
+        {
+            _id: '1',
+            landmarkType: 'Education',
+            landmarkName: 'Amrita University',
+            distanceFromHostel: '2km',
+            description: 'Main road to Amrita University',
+            address: 'University Road',
+            googleMapsUrl: 'https://maps.app.goo.gl/pAimnTtZEAkToqWMA',
+        },
+        {
+            _id: '1',
+            landmarkType: 'Education',
+            landmarkName: 'VIT University',
+            distanceFromHostel: '5km',
+            description: 'Main road to VIT University',
+            address: 'University Road',
+            googleMapsUrl: 'https://maps.app.goo.gl/GmLz7sc5gNxmaWzCA',
         },
         {
             _id: '2',
@@ -433,7 +451,7 @@ const mockData = {
         },
         {
             _id: '6',
-            title: 'Library/Study Hall',
+            title: 'Study Hall',
             description: 'Dedicated silent zone for exam preparations and reading.',
             icon: 'Book'
         },
@@ -442,12 +460,6 @@ const mockData = {
             title: 'Washing Machines',
             description: 'Fully automatic washing machines available for student use.',
             icon: 'Waves'
-        },
-        {
-            _id: '8',
-            title: 'Biometric Access',
-            description: 'Secure digital entry system for residents only.',
-            icon: 'Fingerprint'
         }
     ],
     faqs: [
