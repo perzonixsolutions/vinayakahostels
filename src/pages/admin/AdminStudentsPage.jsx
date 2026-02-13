@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle, Search } from 'lucide-react';
 import AuthService from '@/integrations/AuthService';
 
-const API_URL = 'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function AdminStudentsPage() {
     const [students, setStudents] = useState([]);

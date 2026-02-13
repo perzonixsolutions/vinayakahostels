@@ -10,7 +10,7 @@ import {
     XCircle
 } from 'lucide-react';
 
-const API_URL = 'http://localhost:5001/api';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const StatCard = ({ title, value, subtext, icon: Icon, color }) => (
     <div className="bg-white p-6 rounded-lg border border-muted-grey shadow-sm">

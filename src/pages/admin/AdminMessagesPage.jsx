@@ -24,7 +24,7 @@ export default function AdminMessagesPage() {
         setLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:5001/api/contact', {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/contact`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -58,11 +58,11 @@ export default function AdminMessagesPage() {
             if (newStatus === 'permanent_delete') {
                 if (!window.confirm('Are you sure you want to permanently delete this message? This action cannot be undone.')) return;
 
-                await axios.delete(`http://localhost:5001/api/contact/${id}`, {
+                await axios.delete(`${import.meta.env.VITE_API_URL}/contact/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             } else {
-                await axios.patch(`http://localhost:5001/api/contact/${id}`,
+                await axios.patch(`${import.meta.env.VITE_API_URL}/contact/${id}`,
                     { status: newStatus },
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
@@ -104,7 +104,7 @@ export default function AdminMessagesPage() {
 
         try {
             const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5001/api/contact/bulk-update',
+            await axios.post(`${import.meta.env.VITE_API_URL}/contact/bulk-update`,
                 { ids: selectedIds, action },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

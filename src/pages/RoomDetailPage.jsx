@@ -13,7 +13,7 @@ export default function RoomDetailPage() {
     const { id } = useParams();
     const [room, setRoom] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const API_URL = 'http://localhost:5001/api/hostels/public';
+    const API_URL = `${import.meta.env.VITE_API_URL}/hostels/public`;
 
     useEffect(() => {
         const loadRoom = async () => {
