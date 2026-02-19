@@ -25,39 +25,43 @@ import AdminMessagesPage from './pages/admin/AdminMessagesPage'
 
 import { ScrollToTop } from './lib/scroll-to-top'
 
+import MaintenanceRoute from './components/MaintenanceRoute'
+
 function App() {
 
   return (
     <>
       <Router>
         <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/availability" element={<AvailabilityPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/dining" element={<DiningPage />} />
-          <Route path="/facilities" element={<FacilitiesPage />} />
-          <Route path="/faqs" element={<FAQsPage />} />
-          <Route path="/gallery" element={<GalleryPage />} />
-          <Route path="/location" element={<LocationPage />} />
-          <Route path="/rooms" element={<RoomsPage />} />
-          <Route path="/rooms/:id" element={<RoomDetailPage />} />
-          <Route path="/rules" element={<RulesPage />} />
-          <Route path="/testimonials" element={<TestimonialsPage />} />
-          <Route path="/admin" element={<AdminLoginPage />} />
+        <MaintenanceRoute>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/availability" element={<AvailabilityPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/dining" element={<DiningPage />} />
+            <Route path="/facilities" element={<FacilitiesPage />} />
+            <Route path="/faqs" element={<FAQsPage />} />
+            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/location" element={<LocationPage />} />
+            <Route path="/rooms" element={<RoomsPage />} />
+            <Route path="/rooms/:id" element={<RoomDetailPage />} />
+            <Route path="/rules" element={<RulesPage />} />
+            <Route path="/testimonials" element={<TestimonialsPage />} />
+            <Route path="/admin" element={<AdminLoginPage />} />
 
-          {/* Admin Routes with Layout */}
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route path="dashboard" element={<AdminDashboardPage />} />
-            <Route path="students" element={<AdminStudentsPage />} />
-            <Route path="students/add" element={<AdminAddStudentPage />} />
-            <Route path="hostels" element={<AdminHostelsPage />} />
-            <Route path="hostels/block/:id" element={<AdminBlockDetailPage />} />
-            <Route path="menu" element={<AdminMenuPage />} />
-            <Route path="messages" element={<AdminMessagesPage />} />
-          </Route>
-        </Routes>
+            {/* Admin Routes with Layout */}
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route path="dashboard" element={<AdminDashboardPage />} />
+              <Route path="students" element={<AdminStudentsPage />} />
+              <Route path="students/add" element={<AdminAddStudentPage />} />
+              <Route path="hostels" element={<AdminHostelsPage />} />
+              <Route path="hostels/block/:id" element={<AdminBlockDetailPage />} />
+              <Route path="menu" element={<AdminMenuPage />} />
+              <Route path="messages" element={<AdminMessagesPage />} />
+            </Route>
+          </Routes>
+        </MaintenanceRoute>
       </Router>
     </>
   )

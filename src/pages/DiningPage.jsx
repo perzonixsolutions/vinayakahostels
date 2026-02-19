@@ -184,7 +184,7 @@ export default function DiningPage() {
                                                     {item.dishImage && (
                                                         <div className="aspect-[4/3] overflow-hidden">
                                                             <Image
-                                                                src={item.dishImage}
+                                                                src={item.dishImage.startsWith('http') ? item.dishImage : `${API_URL.replace(/\/api$/, '')}${item.dishImage}`}
                                                                 alt={item.menuItemName || 'Dish'}
                                                                 className="w-full h-full object-cover"
                                                                 width={400}

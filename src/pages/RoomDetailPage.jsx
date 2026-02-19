@@ -33,7 +33,9 @@ export default function RoomDetailPage() {
                     amenities: data.amenities,
                     pricePerMonth: data.price_monthly,
                     pricePerSemester: data.price_semester,
-                    roomPhotos: data.image_url,
+                    roomPhotos: data.image_url ?
+                        (data.image_url.startsWith('http') ? data.image_url : `${import.meta.env.VITE_API_URL.replace(/\/api$/, '')}${data.image_url}`)
+                        : null,
                 };
                 setRoom(mappedRoom);
             } catch (error) {

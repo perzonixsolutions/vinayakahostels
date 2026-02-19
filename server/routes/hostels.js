@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
 const verifyToken = require('../middleware/authMiddleware');
+const upload = require('../middleware/uploadMiddleware');
 
 // Get all blocks
 router.get('/blocks', verifyToken, (req, res) => {
@@ -32,8 +33,13 @@ router.get('/blocks/:id/rooms', verifyToken, (req, res) => {
 });
 
 // Add a room
-router.post('/rooms', verifyToken, (req, res) => {
-    const { block_id, room_number, capacity, type, name, price_monthly, price_semester, image_url, description, amenities, is_visible } = req.body;
+router.post('/rooms', verifyToken, upload.single('image'), (req, res) => {
+    const { block_id, room_number, capacity, type, name, price_monthly, price_semester, description, amenities, is_visible } = req.body;
+
+    let image_url = '';
+    if (req.file) {
+        image_url = `/uploads/${req.file.filename}`;
+    }
 
     const sql = `INSERT INTO rooms (
         block_id, room_number, capacity, type, name, price_monthly, price_semester, image_url, description, amenities, is_visible
@@ -50,7 +56,7 @@ router.post('/rooms', verifyToken, (req, res) => {
         image_url,
         description,
         amenities,
-        is_visible ? 1 : 0
+        is_visible === 'true' || is_visible === true ? 1 : 0
     ];
 
     db.run(sql, params, function (err) {

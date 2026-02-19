@@ -10,6 +10,7 @@ import { BaseCrudService } from '@/integrations';
 export default function AvailabilityPage() {
     const [rooms, setRooms] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const API_URL = `${import.meta.env.VITE_API_URL}/hostels/public`;
 
     useEffect(() => {
         loadRooms();
@@ -17,8 +18,28 @@ export default function AvailabilityPage() {
 
     const loadRooms = async () => {
         try {
-            const result = await BaseCrudService.getAll('roomtypes');
-            setRooms(result.items);
+            const response = await fetch(API_URL);
+            if (!response.ok) throw new Error('Failed to fetch rooms');
+            const data = await response.json();
+
+            const mappedRooms = data.map(room => {
+                const availableBeds = room.capacity - room.current_occupancy;
+                let status = 'Available';
+                if (availableBeds <= 0) status = 'Full';
+                else if (availableBeds <= 2) status = 'Limited';
+
+                return {
+                    _id: room.id,
+                    roomName: room.name || `Room ${room.room_number}`,
+                    availabilityStatus: status,
+                    description: room.description,
+                    capacity: room.capacity,
+                    amenities: room.amenities,
+                    pricePerMonth: room.price_monthly,
+                    pricePerSemester: room.price_semester,
+                };
+            });
+            setRooms(mappedRooms);
         } catch (error) {
             console.error('Failed to load rooms:', error);
         } finally {
@@ -130,7 +151,7 @@ export default function AvailabilityPage() {
                                                     {getStatusText(room.availabilityStatus)}
                                                 </span>
                                                 <div className="flex gap-3">
-                                                    <Link to={`/room/${room._id}`}>
+                                                    <Link to={`/rooms/${room._id}`}>
                                                         <Button
                                                             variant="outline"
                                                             className="border-primary text-primary hover:bg-primary/5 font-paragraph font-medium"

@@ -29,7 +29,7 @@ export default function AdminMenuPage() {
         name: '',
         description: '',
         price: '',
-        image_url: '',
+        image: null,
         day_of_week: 'Daily',
         is_available: true
     });
@@ -58,15 +58,30 @@ export default function AdminMenuPage() {
         setIsSubmitting(true);
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`${API_URL}/menu`, newItem, {
-                headers: { Authorization: `Bearer ${token}` }
+            const formData = new FormData();
+            formData.append('meal_type', newItem.meal_type);
+            formData.append('name', newItem.name);
+            formData.append('description', newItem.description);
+            formData.append('price', newItem.price);
+            formData.append('day_of_week', newItem.day_of_week);
+            formData.append('is_available', newItem.is_available);
+
+            if (newItem.image) {
+                formData.append('image', newItem.image);
+            }
+
+            await axios.post(`${API_URL}/menu`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
             });
             setNewItem({
                 meal_type: 'Breakfast',
                 name: '',
                 description: '',
                 price: '',
-                image_url: '',
+                image: null,
                 day_of_week: 'Daily',
                 is_available: true
             });
@@ -105,6 +120,15 @@ export default function AdminMenuPage() {
         acc[type] = menuItems.filter(item => item.meal_type === type);
         return acc;
     }, {});
+
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return null;
+        if (imagePath.startsWith('http')) return imagePath;
+        // API_URL includes /api, but images are at root /uploads
+        // Remove /api from the end of API_URL
+        const baseUrl = API_URL.replace(/\/api$/, '');
+        return `${baseUrl}${imagePath}`;
+    };
 
     return (
         <div className="space-y-6">
@@ -173,12 +197,12 @@ export default function AdminMenuPage() {
                                     </select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="image_url">Image URL</Label>
+                                    <Label htmlFor="image">Image</Label>
                                     <Input
-                                        id="image_url"
-                                        value={newItem.image_url}
-                                        onChange={(e) => setNewItem({ ...newItem, image_url: e.target.value })}
-                                        placeholder="https://..."
+                                        id="image"
+                                        type="file"
+                                        onChange={(e) => setNewItem({ ...newItem, image: e.target.files[0] })}
+                                        accept="image/*"
                                     />
                                 </div>
                             </div>
@@ -208,8 +232,12 @@ export default function AdminMenuPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {groupedMenu[type]?.map(item => (
                                     <div key={item.id} className="border border-muted-grey rounded-md p-4 flex gap-4 hover:shadow-md transition-shadow">
-                                        {item.image_url && (
-                                            <img src={item.image_url} alt={item.name} className="w-20 h-20 object-cover rounded-md flex-shrink-0" />
+                                        {(item.image || item.image_url) && (
+                                            <img
+                                                src={getImageUrl(item.image || item.image_url)}
+                                                alt={item.name}
+                                                className="w-20 h-20 object-cover rounded-md flex-shrink-0"
+                                            />
                                         )}
                                         <div className="flex-1">
                                             <div className="flex justify-between items-start">

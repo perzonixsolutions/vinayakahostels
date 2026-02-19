@@ -14,7 +14,9 @@ if (DB_TYPE === 'mysql') {
         database: process.env.DB_NAME,
         waitForConnections: true,
         connectionLimit: 10,
-        queueLimit: 0
+        queueLimit: 0,
+        connectTimeout: 60000, // 60s
+        acquireTimeout: 60000  // 60s
     });
 
     console.log(`Connecting to MySQL Database: ${process.env.DB_NAME} as ${process.env.DB_USER}`);
@@ -136,16 +138,21 @@ function initializeMySQL(pool) {
     queries.forEach(query => {
         p = p.then(() => new Promise((resolve, reject) => {
             pool.query(query, (err) => {
-                if (err) console.error('Error creating table MySQL:', err);
-                resolve();
+                // Ignore specific errors if table already exists or connection fails (soft fail for init)
+                if (err) {
+                    console.error('Warning creating table MySQL:', err.code, err.message);
+                }
+                resolve(); // Always resolve so next query runs
             });
         }));
     });
 
     p.then(() => {
-        console.log('MySQL Tables initialized.');
-        seedAdmin();
-        seedHostelData();
+        console.log('MySQL Tables initialization check complete.');
+        // seedAdmin(); // Optional: Call only if needed
+        // seedHostelData();
+    }).catch(err => {
+        console.error('MySQL Initialization critical error:', err);
     });
 }
 

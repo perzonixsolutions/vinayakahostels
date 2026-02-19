@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/database');
 const verifyToken = require('../middleware/authMiddleware');
+const upload = require('../middleware/uploadMiddleware');
 
 // Get all menu items
 router.get('/', (req, res) => {
@@ -12,8 +13,17 @@ router.get('/', (req, res) => {
 });
 
 // Add a menu item
-router.post('/', verifyToken, (req, res) => {
-    const { meal_type, name, description, price, image_url, is_available, day_of_week } = req.body;
+router.post('/', verifyToken, upload.single('image'), (req, res) => {
+    console.log('Received Add Menu Item Request');
+    console.log('Body:', req.body);
+    console.log('File:', req.file);
+
+    const { meal_type, name, description, price, is_available, day_of_week } = req.body;
+
+    let image_url = '';
+    if (req.file) {
+        image_url = `/uploads/${req.file.filename}`;
+    }
 
     // Map frontend fields (image_url, is_available) to DB columns (image, is_active)
     const sql = `INSERT INTO menu_items (meal_type, name, description, price, image, is_active, day_of_week) 
@@ -23,9 +33,11 @@ router.post('/', verifyToken, (req, res) => {
 
     db.run(sql, params, function (err) {
         if (err) {
-            console.error('Error adding menu item:', err.message);
+            console.error('Error adding menu item to DB:', err.message);
+            console.error('SQL params:', params);
             return res.status(500).json({ message: 'Error adding menu item', error: err.message });
         }
+        console.log('Menu item added successfully, ID:', this.lastID);
         res.status(201).json({ id: this.lastID, message: 'Menu item added successfully' });
     });
 });

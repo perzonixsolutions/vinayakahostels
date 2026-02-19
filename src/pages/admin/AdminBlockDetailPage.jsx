@@ -26,6 +26,15 @@ export default function AdminBlockDetailPage() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return null;
+        if (imagePath.startsWith('http')) return imagePath;
+        // API_URL includes /api, but images are at root /uploads
+        // Remove /api from the end of API_URL
+        const baseUrl = API_URL.replace(/\/api$/, '');
+        return `${baseUrl}${imagePath}`;
+    };
+
     // List of common amenities to help user
     const COMMON_AMENITIES = [
         "AC", "Wi-Fi", "Attached Bathroom", "Geyser", "Study Table", "Wardrobe", "Balcony"
@@ -39,7 +48,7 @@ export default function AdminBlockDetailPage() {
         name: '',
         price_monthly: '',
         price_semester: '',
-        image_url: '',
+        image: null,
         description: '',
         amenities: '',
         is_visible: true
@@ -75,14 +84,25 @@ export default function AdminBlockDetailPage() {
         setIsSubmitting(true);
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`${API_URL}/hostels/rooms`, {
-                ...newRoom,
-                block_id: id,
-                // Ensure numbers are numbers
-                price_monthly: newRoom.price_monthly ? parseInt(newRoom.price_monthly) : null,
-                price_semester: newRoom.price_semester ? parseInt(newRoom.price_semester) : null,
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
+            const formData = new FormData();
+            formData.append('block_id', id);
+            formData.append('room_number', newRoom.room_number);
+            formData.append('capacity', newRoom.capacity);
+            formData.append('type', newRoom.type);
+            formData.append('name', newRoom.name);
+            formData.append('description', newRoom.description);
+            formData.append('amenities', newRoom.amenities);
+            formData.append('is_visible', newRoom.is_visible);
+
+            if (newRoom.price_monthly) formData.append('price_monthly', newRoom.price_monthly);
+            if (newRoom.price_semester) formData.append('price_semester', newRoom.price_semester);
+            if (newRoom.image) formData.append('image', newRoom.image);
+
+            await axios.post(`${API_URL}/hostels/rooms`, formData, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data'
+                }
             });
 
             setNewRoom({
@@ -92,7 +112,7 @@ export default function AdminBlockDetailPage() {
                 name: '',
                 price_monthly: '',
                 price_semester: '',
-                image_url: '',
+                image: null,
                 description: '',
                 amenities: '',
                 is_visible: true
@@ -207,12 +227,12 @@ export default function AdminBlockDetailPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="image_url">Image URL</Label>
+                                <Label htmlFor="image">Room Image</Label>
                                 <Input
-                                    id="image_url"
-                                    value={newRoom.image_url}
-                                    onChange={(e) => setNewRoom({ ...newRoom, image_url: e.target.value })}
-                                    placeholder="https://..."
+                                    id="image"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => setNewRoom({ ...newRoom, image: e.target.files[0] })}
                                 />
                             </div>
 
@@ -284,6 +304,21 @@ export default function AdminBlockDetailPage() {
                                 )}
                             </div>
                         </div>
+
+                        {room.image_url && (
+                            <div className="mb-3 w-full h-32 rounded-md overflow-hidden bg-gray-100">
+                                <img
+                                    src={getImageUrl(room.image_url)}
+                                    alt={room.room_number}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = 'https://via.placeholder.com/400x300?text=No+Image';
+                                    }}
+                                />
+                            </div>
+                        )}
+
                         <div className="flex items-center text-sm text-gray-600 mt-2">
                             <Users size={16} className="mr-2" />
                             <span>{room.current_occupancy} / {room.capacity} Occupied</span>

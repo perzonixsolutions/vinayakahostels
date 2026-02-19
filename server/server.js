@@ -12,13 +12,16 @@ const helmet = require('helmet');
 const compression = require('compression');
 
 // Middleware
-app.use(helmet());
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 app.use(compression());
 app.use(cors({
     origin: process.env.FRONTEND_URL || '*', // Allow all if not set (for dev/testing) or specify frontend URL
     credentials: true
 }));
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
 // Routes
 // Routes
