@@ -104,6 +104,45 @@ router.get('/public/:id', (req, res) => {
     });
 });
 
+// Delete a block
+router.delete('/blocks/:id', verifyToken, (req, res) => {
+    const blockId = req.params.id;
+
+    // Check if block has rooms
+    db.get("SELECT COUNT(*) as count FROM rooms WHERE block_id = ?", [blockId], (err, row) => {
+        if (err) return res.status(500).json({ message: 'Database error' });
+        if (row.count > 0) {
+            return res.status(400).json({ message: 'Cannot delete block with existing rooms. Delete rooms first.' });
+        }
+
+        db.run("DELETE FROM blocks WHERE id = ?", [blockId], function (err) {
+            if (err) return res.status(500).json({ message: 'Error deleting block', error: err.message });
+            if (this.changes === 0) return res.status(404).json({ message: 'Block not found' });
+            res.json({ message: 'Block deleted successfully' });
+        });
+    });
+});
+
+// Delete a room
+router.delete('/rooms/:id', verifyToken, (req, res) => {
+    const roomId = req.params.id;
+
+    // Check if room is occupied (has students)
+    db.get("SELECT current_occupancy FROM rooms WHERE id = ?", [roomId], (err, row) => {
+        if (err) return res.status(500).json({ message: 'Database error' });
+        if (!row) return res.status(404).json({ message: 'Room not found' });
+
+        if (row.current_occupancy > 0) {
+            return res.status(400).json({ message: 'Cannot delete occupied room. Reassign or remove students first.' });
+        }
+
+        db.run("DELETE FROM rooms WHERE id = ?", [roomId], function (err) {
+            if (err) return res.status(500).json({ message: 'Error deleting room', error: err.message });
+            res.json({ message: 'Room deleted successfully' });
+        });
+    });
+});
+
 // Get Stats
 router.get('/stats', verifyToken, (req, res) => {
     db.all("SELECT capacity, current_occupancy FROM rooms", (err, rows) => {

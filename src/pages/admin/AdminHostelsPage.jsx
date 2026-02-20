@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Building, Plus, ArrowRight } from 'lucide-react';
+import { Building, Plus, ArrowRight, Trash2 } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -40,6 +40,19 @@ export default function AdminHostelsPage() {
             console.error('Error fetching blocks:', error);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleDeleteBlock = async (blockId) => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`${API_URL}/hostels/blocks/${blockId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchBlocks();
+        } catch (error) {
+            console.error('Error deleting block:', error);
+            alert(error.response?.data?.message || 'Failed to delete block');
         }
     };
 
@@ -113,22 +126,36 @@ export default function AdminHostelsPage() {
                     </div>
                 ) : (
                     blocks.map(block => (
-                        <Link key={block.id} to={`/admin/hostels/block/${block.id}`} className="group">
-                            <div className="bg-white p-6 rounded-lg shadow-sm border border-muted-grey hover:shadow-md transition-shadow">
-                                <div className="flex justify-between items-start">
-                                    <div className="p-3 bg-primary/10 rounded-full text-primary">
-                                        <Building size={24} />
+                        <div key={block.id} className="group relative">
+                            <Link to={`/admin/hostels/block/${block.id}`}>
+                                <div className="bg-white p-6 rounded-lg shadow-sm border border-muted-grey hover:shadow-md transition-shadow h-full">
+                                    <div className="flex justify-between items-start">
+                                        <div className="p-3 bg-primary/10 rounded-full text-primary">
+                                            <Building size={24} />
+                                        </div>
+                                        <ArrowRight size={20} className="text-gray-400 group-hover:text-primary transition-colors" />
                                     </div>
-                                    <ArrowRight size={20} className="text-gray-400 group-hover:text-primary transition-colors" />
+                                    <h3 className="font-heading text-xl font-bold mt-4 mb-2 group-hover:text-primary transition-colors">
+                                        {block.name}
+                                    </h3>
+                                    <p className="text-gray-500 text-sm">
+                                        Click to manage rooms and view occupancy.
+                                    </p>
                                 </div>
-                                <h3 className="font-heading text-xl font-bold mt-4 mb-2 group-hover:text-primary transition-colors">
-                                    {block.name}
-                                </h3>
-                                <p className="text-gray-500 text-sm">
-                                    Click to manage rooms and view occupancy.
-                                </p>
-                            </div>
-                        </Link>
+                            </Link>
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    if (window.confirm(`Are you sure you want to delete ${block.name}? This action cannot be undone.`)) {
+                                        handleDeleteBlock(block.id);
+                                    }
+                                }}
+                                className="absolute top-4 right-12 p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors z-10"
+                                title="Delete Block"
+                            >
+                                <Trash2 size={18} />
+                            </button>
+                        </div>
                     ))
                 )}
             </div>

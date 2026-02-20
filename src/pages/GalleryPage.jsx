@@ -3,7 +3,9 @@ import { motion as Motion } from 'framer-motion';
 import { Image } from '@/components/ui/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { BaseCrudService } from '@/integrations';
+import axios from 'axios';
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function GalleryPage() {
     const [images, setImages] = useState([]);
@@ -16,13 +18,8 @@ export default function GalleryPage() {
 
     const loadGallery = async () => {
         try {
-            const result = await BaseCrudService.getAll('gallery');
-            const sortedImages = result.items.sort((a, b) => {
-                const orderA = a.displayOrder ?? 999;
-                const orderB = b.displayOrder ?? 999;
-                return orderA - orderB;
-            });
-            setImages(sortedImages);
+            const response = await axios.get(`${API_URL}/gallery`);
+            setImages(response.data);
         } catch (error) {
             console.error('Failed to load gallery:', error);
         } finally {
@@ -35,6 +32,13 @@ export default function GalleryPage() {
     const filteredImages = selectedCategory === 'All'
         ? images
         : images.filter(img => img.category === selectedCategory);
+
+    const getImageUrl = (imagePath) => {
+        if (!imagePath) return null;
+        if (imagePath.startsWith('http')) return imagePath;
+        const baseUrl = API_URL.replace(/\/api$/, '');
+        return `${baseUrl}${imagePath}`;
+    };
 
     return (
         <div className="min-h-screen bg-background">
@@ -72,8 +76,8 @@ export default function GalleryPage() {
                                     key={category}
                                     onClick={() => setSelectedCategory(category)}
                                     className={`px-6 py-3 rounded-lg font-paragraph text-base font-medium transition-all duration-200 ${selectedCategory === category
-                                            ? 'bg-primary text-primary-foreground'
-                                            : 'bg-white text-foreground border border-muted-grey hover:border-primary'
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'bg-white text-foreground border border-muted-grey hover:border-primary'
                                         }`}
                                 >
                                     {category}
@@ -92,7 +96,7 @@ export default function GalleryPage() {
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {filteredImages.map((item, index) => (
                                     <Motion.div
-                                        key={item._id}
+                                        key={item.id}
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         viewport={{ once: true }}
@@ -101,7 +105,7 @@ export default function GalleryPage() {
                                     >
                                         <div className="aspect-[4/3] overflow-hidden">
                                             <Image
-                                                src={item.image || 'https://static.wixstatic.com/media/0e16eb_e8bff4d4c7a44b0ea7804005804c8810~mv2.png?originWidth=576&originHeight=448'}
+                                                src={getImageUrl(item.image) || 'https://static.wixstatic.com/media/0e16eb_e8bff4d4c7a44b0ea7804005804c8810~mv2.png?originWidth=576&originHeight=448'}
                                                 alt={item.title || 'Gallery image'}
                                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                 width={600}

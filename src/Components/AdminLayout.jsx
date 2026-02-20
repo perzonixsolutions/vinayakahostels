@@ -11,7 +11,8 @@ import {
     LogOut,
     Menu,
     X,
-    MessageSquare
+    MessageSquare,
+    Image
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AuthService from '@/integrations/AuthService';
@@ -35,14 +36,20 @@ export default function AdminLayout() {
         messages: true
     });
     const [blocks, setBlocks] = useState([]);
+    const [unreadCount, setUnreadCount] = useState(0);
     const location = useLocation();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!AuthService.isAuthenticated()) {
             navigate('/admin');
+        } else {
+            fetchBlocks();
+            fetchUnreadMessages();
+            // Poll for unread messages every minute
+            const interval = setInterval(fetchUnreadMessages, 60000);
+            return () => clearInterval(interval);
         }
-        fetchBlocks();
     }, [navigate]);
 
     const fetchBlocks = async () => {
@@ -53,6 +60,17 @@ export default function AdminLayout() {
             setBlocks(response.data);
         } catch (error) {
             console.error('Error fetching blocks:', error);
+        }
+    };
+
+    const fetchUnreadMessages = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/contact/stats`, {
+                headers: getAuthHeader()
+            });
+            setUnreadCount(response.data.unreadCount);
+        } catch (error) {
+            console.error('Error fetching message stats:', error);
         }
     };
 
@@ -108,7 +126,14 @@ export default function AdminLayout() {
                                 className="w-full flex items-center justify-between px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
                             >
                                 <div className="flex items-center space-x-3">
-                                    <MessageSquare size={20} />
+                                    <div className="relative">
+                                        <MessageSquare size={20} />
+                                        {unreadCount > 0 && (
+                                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                                                {unreadCount > 9 ? '9+' : unreadCount}
+                                            </span>
+                                        )}
+                                    </div>
                                     <span className="font-medium">Messages</span>
                                 </div>
                                 {expandedMenus.messages ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
@@ -118,12 +143,17 @@ export default function AdminLayout() {
                                 <div className="ml-4 pl-4 border-l-2 border-gray-100 space-y-1 mt-1">
                                     <Link
                                         to="/admin/messages?status=new"
-                                        className={`block px-4 py-2 text-sm rounded-lg ${location.search === '?status=new'
+                                        className={`block px-4 py-2 text-sm rounded-lg flex justify-between items-center ${location.search === '?status=new'
                                             ? 'bg-primary/10 text-primary'
                                             : 'text-gray-500 hover:text-gray-900'
                                             }`}
                                     >
-                                        New
+                                        <span>New</span>
+                                        {unreadCount > 0 && (
+                                            <span className="bg-red-100 text-red-600 text-xs px-2 py-0.5 rounded-full font-medium">
+                                                {unreadCount}
+                                            </span>
+                                        )}
                                     </Link>
                                     <Link
                                         to="/admin/messages?status=read"
@@ -275,6 +305,18 @@ export default function AdminLayout() {
                                 </div>
                             )}
                         </div>
+
+                        {/* Gallery Section */}
+                        <Link
+                            to="/admin/gallery"
+                            className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${isActive('/admin/gallery') ? 'bg-primary/10 text-primary' : 'text-gray-600 hover:bg-gray-50'
+                                }`}
+                        >
+                            <div className="flex items-center space-x-3">
+                                <Image size={20} />
+                                <span className="font-medium">Gallery</span>
+                            </div>
+                        </Link>
                     </nav>
 
                     <div className="p-4 border-t">
@@ -302,7 +344,7 @@ export default function AdminLayout() {
                 <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
                     <Outlet />
                 </main>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

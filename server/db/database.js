@@ -130,6 +130,15 @@ function initializeMySQL(pool) {
             day_of_week VARCHAR(50),
             image TEXT,
             is_active BOOLEAN DEFAULT 1
+        )`,
+        `CREATE TABLE IF NOT EXISTS gallery (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            category VARCHAR(50),
+            title VARCHAR(255),
+            image TEXT NOT NULL,
+            description TEXT,
+            display_order INT DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )`
     ];
 
@@ -237,6 +246,17 @@ function initializeSQLite(sqliteDb) {
                 seedHostelData();
             }
         });
+
+        // Create Gallery Table
+        sqliteDb.run(`CREATE TABLE IF NOT EXISTS gallery (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            category TEXT,
+            title TEXT,
+            image TEXT NOT NULL,
+            description TEXT,
+            display_order INTEGER DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
     });
 }
 

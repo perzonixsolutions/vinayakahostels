@@ -164,4 +164,25 @@ router.post('/bulk-update', verifyToken, (req, res) => {
     }
 });
 
+// GET /api/contact/stats - Get contact stats (unread count, recent messages)
+router.get('/stats', verifyToken, (req, res) => {
+    const stats = {
+        unreadCount: 0,
+        recentMessages: []
+    };
+
+    // Get unread count
+    db.get("SELECT COUNT(*) as count FROM contacts WHERE status = 'new'", (err, row) => {
+        if (err) return res.status(500).json({ message: 'Database error' });
+        stats.unreadCount = row.count;
+
+        // Get recent 5 messages
+        db.all("SELECT * FROM contacts ORDER BY submitted_at DESC LIMIT 5", (err, rows) => {
+            if (err) return res.status(500).json({ message: 'Database error' });
+            stats.recentMessages = rows;
+            res.json(stats);
+        });
+    });
+});
+
 module.exports = router;

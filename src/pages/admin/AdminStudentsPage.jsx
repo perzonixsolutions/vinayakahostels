@@ -34,6 +34,111 @@ export default function AdminStudentsPage() {
         }
     };
 
+    const [editingStudent, setEditingStudent] = useState(null);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+
+    // Room Assignment State
+    const [blocks, setBlocks] = useState([]);
+    const [rooms, setRooms] = useState([]);
+    const [selectedBlock, setSelectedBlock] = useState('');
+
+    // Initial state for edit form
+    const [editFormData, setEditFormData] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        fee_total: '',
+        fee_paid: '',
+        room_id: ''
+    });
+
+    useEffect(() => {
+        if (isEditOpen) {
+            fetchBlocks();
+        }
+    }, [isEditOpen]);
+
+    useEffect(() => {
+        if (selectedBlock) {
+            fetchRooms(selectedBlock);
+        } else {
+            setRooms([]);
+        }
+    }, [selectedBlock]);
+
+    const fetchBlocks = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${API_URL}/hostels/blocks`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setBlocks(response.data);
+        } catch (error) {
+            console.error('Error fetching blocks:', error);
+        }
+    };
+
+    const fetchRooms = async (blockId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`${API_URL}/hostels/blocks/${blockId}/rooms`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            // Show all rooms, but mark full ones? Or just filter? 
+            // For editing, we might want to see the current room even if full (though here we are re-assigning so maybe only free ones?)
+            // Let's show all but disable full ones unless it's the current room.
+            setRooms(response.data);
+        } catch (error) {
+            console.error('Error fetching rooms:', error);
+        }
+    };
+
+    const handleEditClick = (student) => {
+        setEditingStudent(student);
+        setEditFormData({
+            name: student.name,
+            email: student.email || '',
+            phone: student.phone || '',
+            fee_total: student.fee_total,
+            fee_paid: student.fee_paid,
+            room_id: student.room_id || ''
+        });
+        // If student has a room, try to pre-select block
+        // We need to know the block_id of the student's room. 
+        // The student object has block_name, but maybe not block_id?
+        // Let's check the API response for students. 
+        // It has students.*, rooms.room_number, blocks.name as block_name.
+        // It doesn't seem to have block_id. 
+        // We might need to fetch blocks and find the one matching block_name or update student fetch to include block_id.
+        // For now, let's just default to empty block and user has to re-select if they want to change room.
+        // OR better: Update fetchStudents to return block_id.
+        setSelectedBlock(''); // Reset for now.
+        setIsEditOpen(true);
+    };
+
+    const handleUpdate = async (e) => {
+        e.preventDefault();
+        setIsUpdating(true);
+        try {
+            const token = localStorage.getItem('token');
+            await axios.put(`${API_URL}/students/${editingStudent.id}`, {
+                ...editFormData,
+                rent_total: editFormData.fee_total, // Map back to backend expectation
+                rent_paid: editFormData.fee_paid
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setIsEditOpen(false);
+            fetchStudents();
+        } catch (error) {
+            console.error('Error updating student:', error);
+            alert('Failed to update student');
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
     const filteredStudents = students.filter(student =>
         student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         student.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -128,7 +233,14 @@ export default function AdminStudentsPage() {
                                             {new Date(student.join_date).toLocaleDateString()}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <Button variant="ghost" size="sm" className="text-blue-600">Edit</Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="text-blue-600"
+                                                onClick={() => handleEditClick(student)}
+                                            >
+                                                Edit
+                                            </Button>
                                         </td>
                                     </tr>
                                 ))
@@ -137,6 +249,116 @@ export default function AdminStudentsPage() {
                     </table>
                 </div>
             </div>
+
+            {/* Edit Dialog */}
+            {isEditOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto">
+                    <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl max-h-[90vh] overflow-y-auto">
+                        <h2 className="text-xl font-bold mb-4">Edit Student</h2>
+                        <form onSubmit={handleUpdate} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Name</label>
+                                <input
+                                    type="text"
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-2 border"
+                                    value={editFormData.name}
+                                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Email</label>
+                                <input
+                                    type="email"
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-2 border"
+                                    value={editFormData.email}
+                                    onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700">Phone</label>
+                                <input
+                                    type="text"
+                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-2 border"
+                                    value={editFormData.phone}
+                                    onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+                                    required
+                                />
+                            </div>
+
+                            {/* Room Assignment Section */}
+                            <div className="border-t border-b py-4 space-y-3">
+                                <h3 className="font-medium text-sm text-gray-500">Room Reassignment</h3>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Block</label>
+                                    <select
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-2 border"
+                                        value={selectedBlock}
+                                        onChange={(e) => {
+                                            setSelectedBlock(e.target.value);
+                                            setEditFormData({ ...editFormData, room_id: '' }); // Reset room when block changes
+                                        }}
+                                    >
+                                        <option value="">-- Select Block to Change Room --</option>
+                                        {blocks.map(block => (
+                                            <option key={block.id} value={block.id}>{block.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Room</label>
+                                    <select
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-2 border"
+                                        value={editFormData.room_id}
+                                        onChange={(e) => setEditFormData({ ...editFormData, room_id: e.target.value })}
+                                        disabled={!selectedBlock}
+                                    >
+                                        <option value="">-- Select Room --</option>
+                                        {rooms.map(room => (
+                                            <option
+                                                key={room.id}
+                                                value={room.id}
+                                                disabled={room.current_occupancy >= room.capacity && room.id !== editingStudent?.room_id}
+                                            >
+                                                {room.room_number} ({room.type}) - {room.capacity - room.current_occupancy} beds left
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Total Fee</label>
+                                    <input
+                                        type="number"
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-2 border"
+                                        value={editFormData.fee_total}
+                                        onChange={(e) => setEditFormData({ ...editFormData, fee_total: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700">Fee Paid</label>
+                                    <input
+                                        type="number"
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm p-2 border"
+                                        value={editFormData.fee_paid}
+                                        onChange={(e) => setEditFormData({ ...editFormData, fee_paid: e.target.value })}
+                                    />
+                                </div>
+                            </div>
+                            <div className="flex justify-end space-x-3 mt-6">
+                                <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)}>
+                                    Cancel
+                                </Button>
+                                <Button type="submit" disabled={isUpdating}>
+                                    {isUpdating ? 'Saving...' : 'Save Changes'}
+                                </Button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

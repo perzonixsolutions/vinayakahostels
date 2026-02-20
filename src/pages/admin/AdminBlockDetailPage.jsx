@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Plus, Users, Bed, CreditCard } from 'lucide-react';
+import { ArrowLeft, Plus, Users, Bed, CreditCard, Trash2 } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -124,6 +124,19 @@ export default function AdminBlockDetailPage() {
             alert(error.response?.data?.message || 'Failed to add room.');
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleDeleteRoom = async (roomId) => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`${API_URL}/hostels/rooms/${roomId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchBlockDetails();
+        } catch (error) {
+            console.error('Error deleting room:', error);
+            alert(error.response?.data?.message || 'Failed to delete room');
         }
     };
 
@@ -329,6 +342,21 @@ export default function AdminBlockDetailPage() {
                                     }`}
                                 style={{ width: `${(room.current_occupancy / room.capacity) * 100}%` }}
                             ></div>
+                        </div>
+
+                        <div className="flex justify-end mt-4 pt-3 border-t border-dashed border-gray-200">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-red-500 hover:text-red-700 hover:bg-red-50 h-8 px-2"
+                                onClick={() => {
+                                    if (window.confirm(`Are you sure you want to delete Room ${room.room_number}?`)) {
+                                        handleDeleteRoom(room.id);
+                                    }
+                                }}
+                            >
+                                <Trash2 size={14} className="mr-1" /> Delete
+                            </Button>
                         </div>
                     </div>
                 ))}

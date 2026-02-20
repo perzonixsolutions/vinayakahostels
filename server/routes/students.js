@@ -55,6 +55,68 @@ router.post('/', verifyToken, (req, res) => {
     });
 });
 
+// Update a student
+router.put('/:id', verifyToken, (req, res) => {
+    const studentId = req.params.id;
+    const { name, email, phone, aadhaar, parent_name, parent_phone, address, room_id, rent_total, rent_paid, rent_cycle, status } = req.body;
+
+    // Get current student data to check for room change
+    db.get("SELECT * FROM students WHERE id = ?", [studentId], (err, currentStudent) => {
+        if (err) return res.status(500).json({ message: 'Database error', error: err.message });
+        if (!currentStudent) return res.status(404).json({ message: 'Student not found' });
+
+        const oldRoomId = currentStudent.room_id;
+        const newRoomId = room_id ? parseInt(room_id) : null;
+
+        // Recalculate fees
+        const fee_total = rent_total !== undefined ? rent_total : currentStudent.fee_total;
+        const fee_paid = rent_paid !== undefined ? rent_paid : currentStudent.fee_paid;
+        const fee_due = (parseInt(fee_total) || 0) - (parseInt(fee_paid) || 0);
+
+        const sql = `UPDATE students SET 
+            name = ?, email = ?, phone = ?, aadhaar = ?, 
+            parent_name = ?, parent_phone = ?, address = ?, 
+            room_id = ?, fee_total = ?, fee_paid = ?, fee_due = ?, 
+            rent_cycle = ?, status = ?
+            WHERE id = ?`;
+
+        const params = [
+            name || currentStudent.name,
+            email || currentStudent.email,
+            phone || currentStudent.phone,
+            aadhaar || currentStudent.aadhaar,
+            parent_name || currentStudent.parent_name,
+            parent_phone || currentStudent.parent_phone,
+            address || currentStudent.address,
+            newRoomId,
+            fee_total,
+            fee_paid,
+            fee_due,
+            rent_cycle || currentStudent.rent_cycle,
+            status || currentStudent.status,
+            studentId
+        ];
+
+        db.run(sql, params, function (err) {
+            if (err) return res.status(500).json({ message: 'Error updating student', error: err.message });
+
+            // Handle Room Occupancy if room changed
+            if (oldRoomId !== newRoomId) {
+                // Decrease occupancy of old room
+                if (oldRoomId) {
+                    db.run("UPDATE rooms SET current_occupancy = MAX(0, current_occupancy - 1) WHERE id = ?", [oldRoomId]);
+                }
+                // Increase occupancy of new room
+                if (newRoomId) {
+                    db.run("UPDATE rooms SET current_occupancy = current_occupancy + 1 WHERE id = ?", [newRoomId]);
+                }
+            }
+
+            res.json({ message: 'Student updated successfully' });
+        });
+    });
+});
+
 // Get Stats
 router.get('/stats', verifyToken, (req, res) => {
     const stats = {

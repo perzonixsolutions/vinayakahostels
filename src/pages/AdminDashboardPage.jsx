@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { Button } from '@/components/ui/button';
 import {
     Users,
     BedDouble,
@@ -46,10 +48,15 @@ export default function AdminDashboardPage() {
     const fetchStats = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/dashboard/stats`, {
-                headers: { Authorization: `Bearer ${token}` }
+            const [dashboardRes, contactRes] = await Promise.all([
+                axios.get(`${API_URL}/dashboard/stats`, { headers: { Authorization: `Bearer ${token}` } }),
+                axios.get(`${API_URL}/contact/stats`, { headers: { Authorization: `Bearer ${token}` } })
+            ]);
+
+            setStats({
+                ...dashboardRes.data,
+                recentMessages: contactRes.data.recentMessages
             });
-            setStats(response.data);
         } catch (error) {
             console.error('Error fetching dashboard stats:', error);
         } finally {
@@ -115,6 +122,52 @@ export default function AdminDashboardPage() {
                     icon={AlertCircle}
                     color="bg-orange-500"
                 />
+                <StatCard
+                    title="Pending Fees"
+                    value={`₹${stats.pendingFees.toLocaleString()}`}
+                    subtext="Money not yet paid"
+                    icon={AlertCircle}
+                    color="bg-orange-500"
+                />
+            </div>
+
+            {/* Recent Messages Section */}
+            <div className="bg-white rounded-lg border border-muted-grey shadow-sm overflow-hidden mt-6">
+                <div className="p-6 border-b border-gray-100 flex justify-between items-center">
+                    <h2 className="font-heading text-lg font-bold">Recent Messages</h2>
+                    <Link to="/admin/messages" className="text-primary text-sm hover:underline">
+                        View All
+                    </Link>
+                </div>
+                <div className="divide-y divide-gray-100">
+                    {stats.recentMessages && stats.recentMessages.length > 0 ? (
+                        stats.recentMessages.map((msg) => (
+                            <div key={msg.id} className="p-4 hover:bg-gray-50 flex justify-between items-center transition-colors">
+                                <div className="flex-1 min-w-0 pr-4">
+                                    <div className="flex items-center mb-1">
+                                        <span className="font-medium text-gray-900 truncate">{msg.name}</span>
+                                        {msg.status === 'new' && (
+                                            <span className="ml-2 px-2 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-700 rounded-full">NEW</span>
+                                        )}
+                                    </div>
+                                    <p className="text-sm text-gray-600 truncate">{msg.message}</p>
+                                    <div className="text-xs text-gray-400 mt-1">
+                                        {msg.email} • {new Date(msg.submitted_at).toLocaleDateString()}
+                                    </div>
+                                </div>
+                                <Link to={`/admin/messages?id=${msg.id}`}>
+                                    <Button variant="ghost" size="sm" className="text-gray-400 hover:text-primary">
+                                        View
+                                    </Button>
+                                </Link>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="p-8 text-center text-gray-500">
+                            No recent messages.
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="bg-white p-8 rounded-lg shadow-sm border border-muted-grey text-center py-20 mt-8">
