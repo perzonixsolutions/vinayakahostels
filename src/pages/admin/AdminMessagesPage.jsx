@@ -29,7 +29,7 @@ export default function AdminMessagesPage() {
             });
 
             // Client-side filtering based on status
-            const allMessages = response.data;
+            const allMessages = Array.isArray(response.data) ? response.data : [];
             let filteredMessages = [];
 
             if (currentStatus === 'new') {

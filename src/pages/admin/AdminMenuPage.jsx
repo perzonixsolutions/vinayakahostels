@@ -45,7 +45,12 @@ export default function AdminMenuPage() {
         setIsLoading(true);
         try {
             const res = await axios.get(`${API_URL}/menu`);
-            setMenuItems(res.data);
+            if (Array.isArray(res.data)) {
+                setMenuItems(res.data);
+            } else {
+                console.error('Failed to load menu: Invalid response format');
+                setMenuItems([]);
+            }
         } catch (error) {
             console.error('Error fetching menu:', error);
         } finally {

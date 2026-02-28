@@ -35,7 +35,12 @@ export default function AdminHostelsPage() {
             const response = await axios.get(`${API_URL}/hostels/blocks`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setBlocks(response.data);
+            if (Array.isArray(response.data)) {
+                setBlocks(response.data);
+            } else {
+                console.error('Invalid response format');
+                setBlocks([]);
+            }
         } catch (error) {
             console.error('Error fetching blocks:', error);
         } finally {

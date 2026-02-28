@@ -37,7 +37,7 @@ const MaintenancePage = () => {
                             For urgent inquiries, please contact us:
                         </p>
                         <p className="text-lg font-bold text-blue-900 mt-1">
-                            +91 99669 88399
+                            +91 88861 48989
                         </p>
                     </div>
 

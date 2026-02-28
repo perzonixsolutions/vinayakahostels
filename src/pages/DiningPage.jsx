@@ -5,6 +5,7 @@ import { Clock } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import axios from 'axios';
+import SEO from '@/components/SEO';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -20,6 +21,12 @@ export default function DiningPage() {
         try {
             const response = await axios.get(`${API_URL}/menu`);
             const data = response.data;
+
+            if (!Array.isArray(data)) {
+                console.error('Failed to load menu: Invalid response format');
+                setMenuItems([]);
+                return;
+            }
 
             // Map backend fields to frontend expectations
             const mappedItems = data.map(item => ({
@@ -73,6 +80,11 @@ export default function DiningPage() {
 
     return (
         <div className="min-h-screen bg-background">
+            <SEO
+                title="Food & Dining"
+                description="Discover our nutritious, home-cooked dining menu. We provide hygienic, balanced meals for students at Vinayaka Boys Hostel."
+                keywords="Boys Hostel food Kuragallu, PG with food near SRM AP, Student meals Neerukonda, Nutritious boys hostel food, Vinayaka PG dining Mangalagiri"
+            />
             <Header />
 
             {/* Hero Section */}

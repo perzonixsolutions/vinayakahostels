@@ -7,6 +7,7 @@ import { Users, IndianRupee } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BaseCrudService } from '@/integrations';
+import SEO from '@/components/SEO';
 
 export default function RoomsPage() {
     const [rooms, setRooms] = useState([]);
@@ -63,6 +64,11 @@ export default function RoomsPage() {
 
     return (
         <div className="min-h-screen bg-background">
+            <SEO
+                title="Rooms & Pricing"
+                description="Explore comfortable, secure, and affordable boys student rooms at Vinayaka Hostels near Kuragallu and SRM AP. Check our pricing and included amenities."
+                keywords="Boys PG rooms Kuragallu, Single room PG near SRM AP, Shared boys hostel Neerukonda, Affordable student housing Mangalagiri, Boys PG near VIT AP"
+            />
             <Header />
 
             {/* Hero Section */}

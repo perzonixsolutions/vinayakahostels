@@ -1,7 +1,7 @@
 {
   "name": "vinayakahostels",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -21,8 +21,10 @@
     "date-fns": "^4.1.0",
     "framer-motion": "^12.29.2",
     "lucide-react": "^0.563.0",
+    "prop-types": "^15.8.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-helmet-async": "^2.0.5",
     "react-router-dom": "^7.13.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18"

@@ -5,6 +5,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BaseCrudService } from '@/integrations';
 import { format } from 'date-fns';
+import SEO from '@/components/SEO';
 
 export default function RulesPage() {
     const [policies, setPolicies] = useState([]);
@@ -37,6 +38,11 @@ export default function RulesPage() {
 
     return (
         <div className="min-h-screen bg-background">
+            <SEO
+                title="Rules & Policies"
+                description="Review the rules and policies of Vinayaka Boys Hostel that ensure a safe, respectful, and comfortable living environment for all students."
+                keywords="Vinayaka Boys PG rules, Hostel policies Kuragallu, Boys student accommodation rules, Safe PG guidelines Neerukonda, Boys Hostel management policies Mangalagiri"
+            />
             <Header />
 
             {/* Hero Section */}

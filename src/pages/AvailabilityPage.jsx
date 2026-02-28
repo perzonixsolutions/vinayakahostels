@@ -6,6 +6,7 @@ import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BaseCrudService } from '@/integrations';
+import SEO from '@/components/SEO';
 
 export default function AvailabilityPage() {
     const [rooms, setRooms] = useState([]);
@@ -88,6 +89,11 @@ export default function AvailabilityPage() {
 
     return (
         <div className="min-h-screen bg-background">
+            <SEO
+                title="Room Availability"
+                description="Check real-time availability of boys rooms at Vinayaka Hostel. Secure your comfortable student accommodation near SRM AP today."
+                keywords="Boys PG room availability Kuragallu, Boys Hostel beds Neerukonda, Book student room Mangalagiri, Vacant PG rooms near SRM AP"
+            />
             <Header />
 
             {/* Hero Section */}

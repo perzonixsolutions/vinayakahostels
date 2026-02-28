@@ -12,6 +12,8 @@ import LocationPage from './pages/LocationPage'
 import RoomsPage from './pages/RoomsPage'
 import RoomDetailPage from './pages/RoomDetailPage'
 import RulesPage from './pages/RulesPage'
+import TermsOfServicePage from './pages/TermsOfServicePage'
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage'
 import TestimonialsPage from './pages/TestimonialsPage'
 import AdminLoginPage from './pages/AdminLoginPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
@@ -48,6 +50,8 @@ function App() {
             <Route path="/rooms" element={<RoomsPage />} />
             <Route path="/rooms/:id" element={<RoomDetailPage />} />
             <Route path="/rules" element={<RulesPage />} />
+            <Route path="/terms" element={<TermsOfServicePage />} />
+            <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/testimonials" element={<TestimonialsPage />} />
             <Route path="/admin" element={<AdminLoginPage />} />
 

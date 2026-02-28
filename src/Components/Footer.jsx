@@ -115,19 +115,19 @@ export default function Footer() {
                             <li className="flex items-center gap-3">
                                 <Phone className="w-5 h-5 text-primary flex-shrink-0" />
                                 <a
-                                    href="tel:+919876543210"
+                                    href="tel:+918886148989"
                                     className="font-paragraph text-base text-white/80 hover:text-primary transition-colors duration-200"
                                 >
-                                    +91 98765 43210
+                                    +91 88861 48989
                                 </a>
                             </li>
                             <li className="flex items-center gap-3">
                                 <Mail className="w-5 h-5 text-primary flex-shrink-0" />
                                 <a
-                                    href="mailto:vinayakahostels@gmail.com"
+                                    href="mailto:vinayakapghostels@gmail.com"
                                     className="font-paragraph text-base text-white/80 hover:text-primary transition-colors duration-200"
                                 >
-                                    vinayakahostels@gmail.com
+                                    vinayakapghostels@gmail.com
                                 </a>
                             </li>
                         </ul>
@@ -135,31 +135,30 @@ export default function Footer() {
                 </div>
 
                 {/* Bottom Bar */}
-                <div className="pt-8 border-t border-white/10">
+                <div className="pt-8 border-t border-white/10 flex flex-col gap-6">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <p className="font-paragraph text-sm text-white/60 text-center md:text-left">
                             © {new Date().getFullYear()} Vinayaka Hostels. All rights reserved.
                         </p>
                         <div className="flex gap-6">
                             <Link
-                                to="/rules"
+                                to="/privacy"
                                 className="font-paragraph text-sm text-white/60 hover:text-primary transition-colors duration-200"
                             >
                                 Privacy Policy
                             </Link>
                             <Link
-                                to="/rules"
+                                to="/terms"
                                 className="font-paragraph text-sm text-white/60 hover:text-primary transition-colors duration-200"
                             >
                                 Terms of Service
                             </Link>
-                            <Link
-                                to="/admin"
-                                className="font-paragraph text-sm text-white/60 hover:text-primary transition-colors duration-200"
-                            >
-                                Admin Login
-                            </Link>
                         </div>
+                    </div>
+
+                    {/* Developer Credit */}
+                    <div className="font-paragraph text-sm text-white/40 text-center mt-2 flex items-center justify-center gap-1">
+                        Made with <span className="text-red-500">♥</span> by <a href="https://perzonix.in" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">Perzonix Solutions Pvt. Ltd.</a>
                     </div>
                 </div>
             </div>

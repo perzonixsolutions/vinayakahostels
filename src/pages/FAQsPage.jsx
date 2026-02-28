@@ -9,6 +9,7 @@ import {
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BaseCrudService } from '@/integrations';
+import SEO from '@/components/SEO';
 
 export default function FAQsPage() {
     const [faqs, setFaqs] = useState([]);
@@ -40,6 +41,11 @@ export default function FAQsPage() {
 
     return (
         <div className="min-h-screen bg-background">
+            <SEO
+                title="FAQs"
+                description="Find answers to frequently asked questions about Vinayaka Boys Hostel, including our facilities, booking process, rules, and policies for students."
+                keywords="Vinayaka Boys PG FAQs, Hostel queries Kuragallu, Boys PG booking Neerukonda, Student accommodation FAQs Mangalagiri, Boys Hostel rules questions"
+            />
             <Header />
 
             {/* Hero Section */}

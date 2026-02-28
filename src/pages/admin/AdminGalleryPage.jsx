@@ -40,7 +40,12 @@ export default function AdminGalleryPage() {
         setIsLoading(true);
         try {
             const res = await axios.get(`${API_URL}/gallery`);
-            setGalleryItems(res.data);
+            if (Array.isArray(res.data)) {
+                setGalleryItems(res.data);
+            } else {
+                console.error('Invalid response format');
+                setGalleryItems([]);
+            }
         } catch (error) {
             console.error('Error fetching gallery:', error);
         } finally {

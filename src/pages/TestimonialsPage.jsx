@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BaseCrudService } from '@/integrations';
 import { format } from 'date-fns';
+import SEO from '@/components/SEO';
 
 export default function TestimonialsPage() {
     const [testimonials, setTestimonials] = useState([]);
@@ -47,6 +48,11 @@ export default function TestimonialsPage() {
 
     return (
         <div className="min-h-screen bg-background">
+            <SEO
+                title="Testimonials"
+                description="Read reviews and experiences from students about their stay at Vinayaka Boys Hostel near SRM AP."
+                keywords="Vinayaka Boys PG reviews, Student testimonials Kuragallu, Boys Hostel feedback Neerukonda, Best boys PG reviews Mangalagiri"
+            />
             <Header />
 
             {/* Hero Section */}

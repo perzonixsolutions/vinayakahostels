@@ -1,32 +1,38 @@
-import { useEffect, useState } from 'react';
 import { motion as Motion } from 'framer-motion';
 import { Image } from '@/components/ui/image';
-import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { BaseCrudService } from '@/integrations';
+import SEO from '@/components/SEO';
 
 export default function AboutPage() {
-    const [team, setTeam] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        loadTeam();
-    }, []);
-
-    const loadTeam = async () => {
-        try {
-            const result = await BaseCrudService.getAll('managementteam');
-            setTeam(result.items);
-        } catch (error) {
-            console.error('Failed to load team:', error);
-        } finally {
-            setIsLoading(false);
+    const team = [
+        {
+            _id: '1',
+            staffName: 'B.N. Reddy',
+            role: 'Proprietor',
+            bio: 'Founder and visionary behind Vinayaka Hostels, dedicated to providing a comfortable and secure living environment for all residents.',
+        },
+        {
+            _id: '2',
+            staffName: 'Pulla Reddy',
+            role: 'Manager',
+            bio: 'Oversees daily operations and ensures that all residents receive prompt assistance and top-quality facilities.',
+        },
+        {
+            _id: '3',
+            staffName: 'Guru Prasad',
+            role: 'Head Chef',
+            bio: 'Leads the culinary team to deliver nutritious, delicious, and hygienic meals every day.',
         }
-    };
+    ];
 
     return (
         <div className="min-h-screen bg-background">
+            <SEO
+                title="About Us"
+                description="Learn about Vinayaka Boys Hostel & PG mission, vision, and core values. We are committed to providing a safe, clean, and nurturing environment for students near SRM AP, Amrita AP, and VIT AP."
+                keywords="About Vinayaka Boys PG, Student housing near SRM AP, Boys hostel facilities Kuragallu, Safe PG Neerukonda, Best boys accommodation Mangalagiri"
+            />
             <Header />
 
             {/* Hero Section */}
@@ -181,7 +187,7 @@ export default function AboutPage() {
                     </Motion.div>
 
                     <div className="min-h-[400px]">
-                        {isLoading ? null : team.length > 0 ? (
+                        {team.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {team.map((member, index) => (
                                     <Motion.div
@@ -218,10 +224,7 @@ export default function AboutPage() {
                                                 </p>
                                             )}
                                         </div>
-
-
                                     </Motion.div>
-
                                 ))}
                             </div>
                         ) : (

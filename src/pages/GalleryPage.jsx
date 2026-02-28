@@ -4,6 +4,7 @@ import { Image } from '@/components/ui/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import axios from 'axios';
+import SEO from '@/components/SEO';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -19,7 +20,12 @@ export default function GalleryPage() {
     const loadGallery = async () => {
         try {
             const response = await axios.get(`${API_URL}/gallery`);
-            setImages(response.data);
+            if (Array.isArray(response.data)) {
+                setImages(response.data);
+            } else {
+                console.error('Failed to load gallery: Invalid response format');
+                setImages([]);
+            }
         } catch (error) {
             console.error('Failed to load gallery:', error);
         } finally {
@@ -42,6 +48,11 @@ export default function GalleryPage() {
 
     return (
         <div className="min-h-screen bg-background">
+            <SEO
+                title="Photo Gallery"
+                description="Take a visual tour of Vinayaka Boys Hostel. View our well-furnished rooms, hygienic dining areas, and modern facilities near SRM AP."
+                keywords="Vinayaka Boys PG photos Kuragallu, Boys Hostel rooms gallery, PG images Neerukonda, Student accommodation photos Mangalagiri, Boys Hostel facilities gallery"
+            />
             <Header />
 
             {/* Hero Section */}

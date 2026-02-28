@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Shield, Wifi, Utensils, MapPin, Star, CheckCircle, ArrowRight, Quote, ChevronDown } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
 
 export default function HomePage() {
     // ---------------------------------------------------------------------------
@@ -58,6 +59,11 @@ export default function HomePage() {
 
     return (
         <div className="min-h-screen bg-background overflow-x-clip selection:bg-primary/20 selection:text-primary">
+            <SEO
+                title="Premium Student Accommodation in Kuragallu, Near SRM University"
+                description="Experience premium student living at Vinayaka Boys Hostel & PG. We offer safe, comfortable, and modern accommodation with top-class facilities near SRM AP, Amrita AP, and VIT AP."
+                keywords="Boys PG near SRM University AP, Vinayaka Boys Hostel, Premium Student Accommodation Kuragallu, Boys Hostel Neerukonda, PG near Amrita University AP, Boys accommodation near VIT AP, Mangalagiri Boys PG"
+            />
             <Header />
 
             {/* ---------------------------------------------------------------------------
@@ -366,9 +372,28 @@ export default function HomePage() {
 
                 <div className="max-w-[120rem] mx-auto px-8 md:px-20">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {[1, 2, 3].map((item, index) => (
+                        {[
+                            {
+                                name: 'Samuel Verichala',
+                                role: 'Student, SRM University',
+                                initial: 'S',
+                                review: 'The facilities here are top-notch. High-speed WiFi and quiet study areas make it perfect for my academic needs. Highly recommend for any student looking for a peaceful environment!'
+                            },
+                            {
+                                name: 'Samith',
+                                role: 'Student, Engineering',
+                                initial: 'S',
+                                review: 'Finding a hostel with good food was my biggest concern, but Vinayaka PG exceeded my expectations. The home-cooked meals are delicious and hygienic. It truly feels like a home away from home.'
+                            },
+                            {
+                                name: 'Nayak',
+                                role: 'Student, Commerce',
+                                initial: 'N',
+                                review: 'Safety and cleanliness are their top priorities. The daily housekeeping keeps the rooms spotless, and the secure entry gives my parents peace of mind. Best PG in Guntur, hands down.'
+                            }
+                        ].map((testimonial, index) => (
                             <motion.div
-                                key={item}
+                                key={index}
                                 initial={{ opacity: 0, y: 40 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
@@ -382,16 +407,15 @@ export default function HomePage() {
                                     ))}
                                 </div>
                                 <p className="font-paragraph text-lg text-foreground/80 mb-8 leading-relaxed italic">
-                                    "The hostel exceeded our expectations. Clean rooms, good food, and excellent management.
-                                    My parents are completely satisfied with the safety measures."
+                                    "{testimonial.review}"
                                 </p>
                                 <div className="flex items-center gap-4 pt-6 border-t border-muted-grey/30">
                                     <div className="w-12 h-12 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-white font-heading text-xl shadow-md">
-                                        R
+                                        {testimonial.initial}
                                     </div>
                                     <div>
-                                        <p className="font-paragraph font-bold text-foreground">Resident Name</p>
-                                        <p className="font-paragraph text-sm text-primary">Student, Engineering</p>
+                                        <p className="font-paragraph font-bold text-foreground">{testimonial.name}</p>
+                                        <p className="font-paragraph text-sm text-primary">{testimonial.role}</p>
                                     </div>
                                 </div>
                             </motion.div>

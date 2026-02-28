@@ -48,7 +48,7 @@ export default function AdminAddStudentPage() {
             const response = await axios.get(`${API_URL}/hostels/blocks`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setBlocks(response.data);
+            setBlocks(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error('Error fetching blocks:', error);
         }
@@ -60,7 +60,11 @@ export default function AdminAddStudentPage() {
             const response = await axios.get(`${API_URL}/hostels/blocks/${blockId}/rooms`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setRooms(response.data.filter(r => r.current_occupancy < r.capacity));
+            if (Array.isArray(response.data)) {
+                setRooms(response.data.filter(r => r.current_occupancy < r.capacity));
+            } else {
+                setRooms([]);
+            }
         } catch (error) {
             console.error('Error fetching rooms:', error);
         }

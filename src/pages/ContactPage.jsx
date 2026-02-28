@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
 
 export default function ContactPage() {
     const [formData, setFormData] = useState({
@@ -62,6 +63,11 @@ export default function ContactPage() {
 
     return (
         <div className="min-h-screen bg-background">
+            <SEO
+                title="Contact Us"
+                description="Get in touch with Vinayaka Boys Hostel & PG. Book a visit, inquire about rooms, or communicate with our supportive management team in Kuragallu."
+                keywords="Contact Vinayaka Boys PG, Vinayaka Boys Hostel phone number, Kuragallu PG address, Boys Hostel admission inquiry Neerukonda"
+            />
             <Header />
 
             {/* Hero Section */}
@@ -233,10 +239,10 @@ export default function ContactPage() {
                                         <div>
                                             <p className="font-paragraph text-sm text-foreground/60 mb-1">Phone</p>
                                             <a
-                                                href="tel:+919876543210"
+                                                href="tel:+918886148989"
                                                 className="font-paragraph text-base text-foreground hover:text-primary transition-colors"
                                             >
-                                                +91 98765 43210
+                                                +91 88861 48989
                                             </a>
                                         </div>
                                     </div>
@@ -245,13 +251,13 @@ export default function ContactPage() {
                                         <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                                             <Mail className="w-5 h-5 text-primary" />
                                         </div>
-                                        <div>
+                                        <div className="min-w-0">
                                             <p className="font-paragraph text-sm text-foreground/60 mb-1">Email</p>
                                             <a
-                                                href="mailto:info@serenityhostel.com"
-                                                className="font-paragraph text-base text-foreground hover:text-primary transition-colors"
+                                                href="mailto:vinayakapghostels@gmail.com"
+                                                className="font-paragraph text-base text-foreground hover:text-primary transition-colors break-all"
                                             >
-                                                vinayakahostels@gmail.com
+                                                vinayakapghostels@gmail.com
                                             </a>
                                         </div>
                                     </div>
@@ -320,13 +326,13 @@ export default function ContactPage() {
                             Our team is available during office hours to help you.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <a href="tel:+919876543210">
+                            <a href="tel:+918886148989">
                                 <Button className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-lg font-paragraph font-medium">
                                     <Phone className="w-5 h-5 mr-2" />
                                     Call Now
                                 </Button>
                             </a>
-                            <a href="mailto:info@serenityhostel.com">
+                            <a href="mailto:vinayakapghostels@gmail.com">
                                 <Button
                                     variant="outline"
                                     className="border-primary text-primary hover:bg-primary/5 px-8 py-6 text-lg font-paragraph font-medium"

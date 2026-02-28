@@ -26,7 +26,12 @@ export default function AdminStudentsPage() {
                 params: { status: statusFilter },
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setStudents(response.data);
+            if (Array.isArray(response.data)) {
+                setStudents(response.data);
+            } else {
+                console.error('Invalid response format');
+                setStudents([]);
+            }
         } catch (error) {
             console.error('Error fetching students:', error);
         } finally {
@@ -73,7 +78,7 @@ export default function AdminStudentsPage() {
             const response = await axios.get(`${API_URL}/hostels/blocks`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            setBlocks(response.data);
+            setBlocks(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error('Error fetching blocks:', error);
         }
@@ -85,10 +90,7 @@ export default function AdminStudentsPage() {
             const response = await axios.get(`${API_URL}/hostels/blocks/${blockId}/rooms`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            // Show all rooms, but mark full ones? Or just filter? 
-            // For editing, we might want to see the current room even if full (though here we are re-assigning so maybe only free ones?)
-            // Let's show all but disable full ones unless it's the current room.
-            setRooms(response.data);
+            setRooms(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error('Error fetching rooms:', error);
         }

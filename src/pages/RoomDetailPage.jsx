@@ -7,6 +7,7 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Users, IndianRupee, ArrowLeft, CheckCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
 import { BaseCrudService } from '@/integrations';
 
 export default function RoomDetailPage() {
@@ -67,6 +68,13 @@ export default function RoomDetailPage() {
 
     return (
         <div className="min-h-screen bg-background">
+            {room && (
+                <SEO
+                    title={`${room.roomName} - Vinayaka Boys Hostel & PG`}
+                    description={room.description || `Details and availability for boys accommodation ${room.roomName} at Vinayaka PG & Hostels.`}
+                    keywords={`Boys room ${room.roomName}, PG room near SRM AP, Student accommodation Kuragallu, Boys hostel Neerukonda, PG near Amrita AP`}
+                />
+            )}
             <Header />
 
             <div className="w-full max-w-[100rem] mx-auto px-8 md:px-20 py-12">

@@ -34,8 +34,8 @@ export default function Header() {
                     </Link>
 
                     {/* Desktop Navigation & CTA */}
-                    <div className="hidden lg:flex items-center gap-8">
-                        <nav className="flex items-center gap-8">
+                    <div className="hidden xl:flex items-center gap-6 2xl:gap-8">
+                        <nav className="flex items-center gap-6 2xl:gap-8">
                             {navLinks.map((link) => (
                                 <Link
                                     key={link.path}
@@ -60,7 +60,7 @@ export default function Header() {
                     {/* Mobile Menu Button */}
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="lg:hidden p-2 text-foreground hover:text-primary transition-colors"
+                        className="xl:hidden p-2 text-foreground hover:text-primary transition-colors"
                         aria-label="Toggle menu"
                     >
                         {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -69,7 +69,7 @@ export default function Header() {
 
                 {/* Mobile Navigation */}
                 {isMenuOpen && (
-                    <nav className="lg:hidden mt-6 pb-4 space-y-4 border-t border-muted-grey pt-6">
+                    <nav className="xl:hidden mt-6 pb-4 space-y-4 border-t border-muted-grey pt-6">
                         {navLinks.map((link) => (
                             <Link
                                 key={link.path}

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BaseCrudService } from '@/integrations';
+import SEO from '@/components/SEO';
 
 export default function LocationPage() {
     const [landmarks, setLandmarks] = useState([]);
@@ -37,6 +38,11 @@ export default function LocationPage() {
 
     return (
         <div className="min-h-screen bg-background">
+            <SEO
+                title="Location & Neighborhood"
+                description="Find Vinayaka Boys Hostel on the map. Strategically located in Kuragallu near SRM AP, Amrita AP, and VIT AP with easy access to transport."
+                keywords="Boys PG near SRM AP, Hostel in Kuragallu, PG near Amrita AP, Boys Student accommodation Neerukonda, Vinayaka Boys PG Mangalagiri"
+            />
             <Header />
 
             {/* Hero Section */}

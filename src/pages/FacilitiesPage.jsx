@@ -5,6 +5,7 @@ import { CheckCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { BaseCrudService } from '@/integrations';
+import SEO from '@/components/SEO';
 
 export default function FacilitiesPage() {
     const [facilities, setFacilities] = useState([]);
@@ -27,6 +28,11 @@ export default function FacilitiesPage() {
 
     return (
         <div className="min-h-screen bg-background">
+            <SEO
+                title="Our Facilities"
+                description="Explore the premium facilities at Vinayaka Boys Hostel including reliable WiFi, housekeeping, secure entry systems, and common areas."
+                keywords="Boys PG facilities Kuragallu, Hostel amenities Neerukonda, Wi-Fi PG near SRM AP, Housekeeping boys hostel, Secure student housing, Best PG facilities Mangalagiri"
+            />
             <Header />
 
             {/* Hero Section */}
