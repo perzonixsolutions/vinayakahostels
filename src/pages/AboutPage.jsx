@@ -32,6 +32,7 @@ export default function AboutPage() {
                 title="About Us"
                 description="Learn about Vinayaka Boys Hostel & PG mission, vision, and core values. We are committed to providing a safe, clean, and nurturing environment for students near SRM AP, Amrita AP, and VIT AP."
                 keywords="About Vinayaka Boys PG, Student housing near SRM AP, Boys hostel facilities Kuragallu, Safe PG Neerukonda, Best boys accommodation Mangalagiri"
+                canonicalUrl="https://vinayakapghostels.in/about"
             />
             <Header />
 
@@ -198,14 +199,6 @@ export default function AboutPage() {
                                         transition={{ duration: 0.6, delay: index * 0.1 }}
                                         className="bg-white rounded-lg overflow-hidden border border-muted-grey"
                                     >
-                                        <div className="aspect-[3/4] overflow-hidden">
-                                            <Image
-                                                src={member.photo || 'https://static.wixstatic.com/media/0e16eb_07cb501434414ebebec7ccd538c58fc9~mv2.png?originWidth=384&originHeight=512'}
-                                                alt={member.staffName || 'Team member'}
-                                                className="w-full h-full object-cover"
-                                                width={400}
-                                            />
-                                        </div>
                                         <div className="p-6 space-y-3">
                                             <h3 className="font-heading text-2xl text-foreground">
                                                 {member.staffName}

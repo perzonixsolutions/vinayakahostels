@@ -84,6 +84,7 @@ export default function DiningPage() {
                 title="Food & Dining"
                 description="Discover our nutritious, home-cooked dining menu. We provide hygienic, balanced meals for students at Vinayaka Boys Hostel."
                 keywords="Boys Hostel food Kuragallu, PG with food near SRM AP, Student meals Neerukonda, Nutritious boys hostel food, Vinayaka PG dining Mangalagiri"
+                canonicalUrl="https://vinayakapghostels.in/dining"
             />
             <Header />
 

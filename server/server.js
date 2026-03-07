@@ -39,6 +39,10 @@ app.get('/', (req, res) => {
     res.send('It works!');
 });
 
+app.get('/api', (req, res) => {
+    res.json({ status: 'ok', message: 'Vinayaka API is running' });
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

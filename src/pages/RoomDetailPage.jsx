@@ -73,6 +73,7 @@ export default function RoomDetailPage() {
                     title={`${room.roomName} - Vinayaka Boys Hostel & PG`}
                     description={room.description || `Details and availability for boys accommodation ${room.roomName} at Vinayaka PG & Hostels.`}
                     keywords={`Boys room ${room.roomName}, PG room near SRM AP, Student accommodation Kuragallu, Boys hostel Neerukonda, PG near Amrita AP`}
+                    canonicalUrl={`https://vinayakapghostels.in/rooms/${id}`}
                 />
             )}
             <Header />

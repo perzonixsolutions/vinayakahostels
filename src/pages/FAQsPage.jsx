@@ -45,6 +45,7 @@ export default function FAQsPage() {
                 title="FAQs"
                 description="Find answers to frequently asked questions about Vinayaka Boys Hostel, including our facilities, booking process, rules, and policies for students."
                 keywords="Vinayaka Boys PG FAQs, Hostel queries Kuragallu, Boys PG booking Neerukonda, Student accommodation FAQs Mangalagiri, Boys Hostel rules questions"
+                canonicalUrl="https://vinayakapghostels.in/faqs"
             />
             <Header />
 

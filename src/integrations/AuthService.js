@@ -19,6 +19,12 @@ const AuthService = {
                 password
             });
 
+            // Detect if server returned HTML instead of JSON (proxy misconfiguration)
+            const contentType = response.headers['content-type'] || '';
+            if (contentType.includes('text/html')) {
+                throw new Error('Server configuration error. API is not reachable. Please contact the administrator.');
+            }
+
             if (response.data.token) {
                 localStorage.setItem('token', response.data.token);
                 localStorage.setItem('user', JSON.stringify(response.data.user));

@@ -52,6 +52,7 @@ export default function GalleryPage() {
                 title="Photo Gallery"
                 description="Take a visual tour of Vinayaka Boys Hostel. View our well-furnished rooms, hygienic dining areas, and modern facilities near SRM AP."
                 keywords="Vinayaka Boys PG photos Kuragallu, Boys Hostel rooms gallery, PG images Neerukonda, Student accommodation photos Mangalagiri, Boys Hostel facilities gallery"
+                canonicalUrl="https://vinayakapghostels.in/gallery"
             />
             <Header />
 

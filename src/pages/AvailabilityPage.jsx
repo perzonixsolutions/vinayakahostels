@@ -93,6 +93,7 @@ export default function AvailabilityPage() {
                 title="Room Availability"
                 description="Check real-time availability of boys rooms at Vinayaka Hostel. Secure your comfortable student accommodation near SRM AP today."
                 keywords="Boys PG room availability Kuragallu, Boys Hostel beds Neerukonda, Book student room Mangalagiri, Vacant PG rooms near SRM AP"
+                canonicalUrl="https://vinayakapghostels.in/availability"
             />
             <Header />
 

@@ -68,6 +68,7 @@ export default function RoomsPage() {
                 title="Rooms & Pricing"
                 description="Explore comfortable, secure, and affordable boys student rooms at Vinayaka Hostels near Kuragallu and SRM AP. Check our pricing and included amenities."
                 keywords="Boys PG rooms Kuragallu, Single room PG near SRM AP, Shared boys hostel Neerukonda, Affordable student housing Mangalagiri, Boys PG near VIT AP"
+                canonicalUrl="https://vinayakapghostels.in/rooms"
             />
             <Header />
 

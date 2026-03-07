@@ -42,6 +42,7 @@ export default function LocationPage() {
                 title="Location & Neighborhood"
                 description="Find Vinayaka Boys Hostel on the map. Strategically located in Kuragallu near SRM AP, Amrita AP, and VIT AP with easy access to transport."
                 keywords="Boys PG near SRM AP, Hostel in Kuragallu, PG near Amrita AP, Boys Student accommodation Neerukonda, Vinayaka Boys PG Mangalagiri"
+                canonicalUrl="https://vinayakapghostels.in/location"
             />
             <Header />
 

@@ -67,6 +67,7 @@ export default function ContactPage() {
                 title="Contact Us"
                 description="Get in touch with Vinayaka Boys Hostel & PG. Book a visit, inquire about rooms, or communicate with our supportive management team in Kuragallu."
                 keywords="Contact Vinayaka Boys PG, Vinayaka Boys Hostel phone number, Kuragallu PG address, Boys Hostel admission inquiry Neerukonda"
+                canonicalUrl="https://vinayakapghostels.in/contact"
             />
             <Header />
 

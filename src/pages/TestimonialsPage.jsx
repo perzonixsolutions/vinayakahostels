@@ -52,6 +52,7 @@ export default function TestimonialsPage() {
                 title="Testimonials"
                 description="Read reviews and experiences from students about their stay at Vinayaka Boys Hostel near SRM AP."
                 keywords="Vinayaka Boys PG reviews, Student testimonials Kuragallu, Boys Hostel feedback Neerukonda, Best boys PG reviews Mangalagiri"
+                canonicalUrl="https://vinayakapghostels.in/testimonials"
             />
             <Header />
 

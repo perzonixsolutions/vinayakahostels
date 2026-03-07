@@ -23,7 +23,7 @@ export default function AdminLoginPage() {
             await AuthService.login(email, password);
             navigate('/admin/dashboard');
         } catch (err) {
-            setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
+            setError(err.response?.data?.message || err.message || 'Login failed. Please check your credentials.');
         } finally {
             setIsLoading(false);
         }
@@ -43,6 +43,7 @@ export default function AdminLoginPage() {
                             <Input
                                 id="email"
                                 type="email"
+                                autoComplete="username"
                                 placeholder="name@example.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
@@ -55,6 +56,7 @@ export default function AdminLoginPage() {
                             <Input
                                 id="password"
                                 type="password"
+                                autoComplete="current-password"
                                 placeholder="Enter your password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}

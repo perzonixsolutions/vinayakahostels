@@ -42,6 +42,7 @@ export default function RulesPage() {
                 title="Rules & Policies"
                 description="Review the rules and policies of Vinayaka Boys Hostel that ensure a safe, respectful, and comfortable living environment for all students."
                 keywords="Vinayaka Boys PG rules, Hostel policies Kuragallu, Boys student accommodation rules, Safe PG guidelines Neerukonda, Boys Hostel management policies Mangalagiri"
+                canonicalUrl="https://vinayakapghostels.in/rules"
             />
             <Header />
 

@@ -11,6 +11,7 @@ export default function PrivacyPolicyPage() {
                 title="Privacy Policy"
                 description="Privacy Policy for Vinayaka Boys Hostel & PG."
                 keywords="Vinayaka Boys PG privacy policy, Boys Hostel data protection Kuragallu, Student privacy guidelines Neerukonda"
+                canonicalUrl="https://vinayakapghostels.in/privacy"
             />
             <Header />
 

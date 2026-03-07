@@ -11,6 +11,7 @@ export default function TermsOfServicePage() {
                 title="Terms of Service"
                 description="Terms of Service for Vinayaka Boys Hostel & PG."
                 keywords="Vinayaka Boys PG terms, Hostel terms of service Kuragallu, Boys student accommodation conditions Neerukonda"
+                canonicalUrl="https://vinayakapghostels.in/terms"
             />
             <Header />
 

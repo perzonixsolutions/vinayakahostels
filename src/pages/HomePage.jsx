@@ -63,6 +63,7 @@ export default function HomePage() {
                 title="Premium Student Accommodation in Kuragallu, Near SRM University"
                 description="Experience premium student living at Vinayaka Boys Hostel & PG. We offer safe, comfortable, and modern accommodation with top-class facilities near SRM AP, Amrita AP, and VIT AP."
                 keywords="Boys PG near SRM University AP, Vinayaka Boys Hostel, Premium Student Accommodation Kuragallu, Boys Hostel Neerukonda, PG near Amrita University AP, Boys accommodation near VIT AP, Mangalagiri Boys PG"
+                canonicalUrl="https://vinayakapghostels.in/"
             />
             <Header />
 
