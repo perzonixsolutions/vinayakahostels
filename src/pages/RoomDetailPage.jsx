@@ -8,7 +8,6 @@ import { Users, IndianRupee, ArrowLeft, CheckCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
-import { BaseCrudService } from '@/integrations';
 
 export default function RoomDetailPage() {
     const { id } = useParams();

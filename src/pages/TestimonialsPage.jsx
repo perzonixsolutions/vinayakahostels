@@ -1,31 +1,19 @@
-import { useEffect, useState } from 'react';
 import { motion as Motion } from 'framer-motion';
-import { Image } from '@/components/ui/image';
 import { Star } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { BaseCrudService } from '@/integrations';
-import { format } from 'date-fns';
 import SEO from '@/components/SEO';
 
+const TESTIMONIALS = [
+    { _id: '1', rating: 5, reviewText: 'Amazing hostel! The facilities are top-notch and the staff is very friendly. Best place for students.', reviewerName: 'Rahul Verma', reviewerRole: 'Medical Student', reviewDate: 'October 2023' },
+    { _id: '2', rating: 4, reviewText: 'Great food and comfortable rooms. Highly recommended for anyone looking for a home away from home.', reviewerName: 'Priya Reddy', reviewerRole: 'Engineering Student', reviewDate: 'November 2023' },
+    { _id: '3', rating: 5, reviewText: 'Security is excellent, giving my parents peace of mind. The warden is very supportive.', reviewerName: 'Karthik Raju', reviewerRole: 'CA Student', reviewDate: 'January 2024' },
+    { _id: '4', rating: 5, reviewText: 'The food menu is diverse and tasty. I never felt the need to eat out. Great value for money.', reviewerName: 'Anusha Rao', reviewerRole: 'MBA Student', reviewDate: 'February 2024' },
+    { _id: '5', rating: 4, reviewText: 'Cleanliness is maintained properly. Housekeeping staff is regular and efficient.', reviewerName: 'Sandeep Kumar', reviewerRole: 'Student', reviewDate: 'December 2023' },
+];
+
 export default function TestimonialsPage() {
-    const [testimonials, setTestimonials] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        loadTestimonials();
-    }, []);
-
-    const loadTestimonials = async () => {
-        try {
-            const result = await BaseCrudService.getAll('testimonials');
-            setTestimonials(result.items);
-        } catch (error) {
-            console.error('Failed to load testimonials:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const averageRating = (TESTIMONIALS.reduce((sum, t) => sum + (t.rating || 0), 0) / TESTIMONIALS.length).toFixed(1);
 
     const renderStars = (rating) => {
         const stars = [];
@@ -34,17 +22,12 @@ export default function TestimonialsPage() {
             stars.push(
                 <Star
                     key={i}
-                    className={`w-5 h-5 ${i <= ratingValue ? 'fill-accent-gold text-accent-gold' : 'text-muted-grey'
-                        }`}
+                    className={`w-5 h-5 ${i <= ratingValue ? 'fill-accent-gold text-accent-gold' : 'text-muted-grey'}`}
                 />
             );
         }
         return stars;
     };
-
-    const averageRating = testimonials.length > 0
-        ? (testimonials.reduce((sum, t) => sum + (t.rating || 0), 0) / testimonials.length).toFixed(1)
-        : '0.0';
 
     return (
         <div className="min-h-screen bg-background">
@@ -68,108 +51,83 @@ export default function TestimonialsPage() {
                         What Our Residents Say
                     </h1>
                     <p className="font-paragraph text-lg md:text-xl text-foreground/80 leading-relaxed">
-                        Real experiences from students and parents who have chosen Serenity Hostel as their home away from home.
+                        Real experiences from students who have chosen Vinayaka Hostels as their home away from home.
                     </p>
                 </Motion.div>
             </section>
 
             {/* Rating Summary */}
-            {testimonials.length > 0 && (
-                <section className="w-full py-16 bg-secondary/10">
-                    <div className="max-w-[100rem] mx-auto px-8 md:px-20">
-                        <Motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6 }}
-                            className="text-center space-y-6"
-                        >
-                            <div className="flex items-center justify-center gap-3">
-                                <span className="font-heading text-6xl text-primary">{averageRating}</span>
-                                <div className="flex flex-col items-start">
-                                    <div className="flex gap-1">
-                                        {renderStars(Math.round(parseFloat(averageRating)))}
-                                    </div>
-                                    <span className="font-paragraph text-sm text-foreground/60 mt-1">
-                                        Based on {testimonials.length} {testimonials.length === 1 ? 'review' : 'reviews'}
-                                    </span>
+            <section className="w-full py-16 bg-secondary/10">
+                <div className="max-w-[100rem] mx-auto px-8 md:px-20">
+                    <Motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                        className="text-center space-y-6"
+                    >
+                        <div className="flex items-center justify-center gap-3">
+                            <span className="font-heading text-6xl text-primary">{averageRating}</span>
+                            <div className="flex flex-col items-start">
+                                <div className="flex gap-1">
+                                    {renderStars(Math.round(parseFloat(averageRating)))}
                                 </div>
+                                <span className="font-paragraph text-sm text-foreground/60 mt-1">
+                                    Based on {TESTIMONIALS.length} reviews
+                                </span>
                             </div>
-                        </Motion.div>
-                    </div>
-                </section>
-            )}
+                        </div>
+                    </Motion.div>
+                </div>
+            </section>
 
             {/* Testimonials Grid */}
             <section className="w-full py-20">
                 <div className="max-w-[100rem] mx-auto px-8 md:px-20">
-                    <div className="min-h-[500px]">
-                        {isLoading ? null : testimonials.length > 0 ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {testimonials.map((testimonial, index) => (
-                                    <Motion.div
-                                        key={testimonial._id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
-                                        viewport={{ once: true }}
-                                        transition={{ duration: 0.6, delay: index * 0.1 }}
-                                        className="bg-white p-8 rounded-lg border border-muted-grey hover:shadow-lg transition-shadow duration-300 flex flex-col"
-                                    >
-                                        <div className="flex gap-1 mb-4">
-                                            {renderStars(testimonial.rating)}
-                                        </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {TESTIMONIALS.map((testimonial, index) => (
+                            <Motion.div
+                                key={testimonial._id}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 0.6, delay: index * 0.1 }}
+                                className="bg-white p-8 rounded-lg border border-muted-grey hover:shadow-lg transition-shadow duration-300 flex flex-col"
+                            >
+                                <div className="flex gap-1 mb-4">
+                                    {renderStars(testimonial.rating)}
+                                </div>
 
-                                        {testimonial.reviewText && (
-                                            <p className="font-paragraph text-base text-foreground/80 leading-relaxed mb-6 flex-1 italic">
-                                                "{testimonial.reviewText}"
+                                {testimonial.reviewText && (
+                                    <p className="font-paragraph text-base text-foreground/80 leading-relaxed mb-6 flex-1 italic">
+                                        &ldquo;{testimonial.reviewText}&rdquo;
+                                    </p>
+                                )}
+
+                                <div className="flex items-center gap-4 pt-6 border-t border-muted-grey">
+                                    <div className="w-14 h-14 bg-secondary/30 rounded-full flex items-center justify-center flex-shrink-0">
+                                        <span className="font-heading text-2xl text-primary">
+                                            {testimonial.reviewerName?.charAt(0) || 'R'}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <p className="font-paragraph font-medium text-foreground">
+                                            {testimonial.reviewerName || 'Anonymous'}
+                                        </p>
+                                        {testimonial.reviewerRole && (
+                                            <p className="font-paragraph text-sm text-foreground/60">
+                                                {testimonial.reviewerRole}
                                             </p>
                                         )}
-
-                                        <div className="flex items-center gap-4 pt-6 border-t border-muted-grey">
-                                            {testimonial.reviewerImage ? (
-                                                <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0">
-                                                    <Image
-                                                        src={testimonial.reviewerImage}
-                                                        alt={testimonial.reviewerName || 'Reviewer'}
-                                                        className="w-full h-full object-cover"
-                                                        width={56}
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <div className="w-14 h-14 bg-secondary/30 rounded-full flex items-center justify-center flex-shrink-0">
-                                                    <span className="font-heading text-2xl text-primary">
-                                                        {testimonial.reviewerName?.charAt(0) || 'R'}
-                                                    </span>
-                                                </div>
-                                            )}
-                                            <div>
-                                                <p className="font-paragraph font-medium text-foreground">
-                                                    {testimonial.reviewerName || 'Anonymous'}
-                                                </p>
-                                                {testimonial.reviewerRole && (
-                                                    <p className="font-paragraph text-sm text-foreground/60">
-                                                        {testimonial.reviewerRole}
-                                                    </p>
-                                                )}
-                                                {testimonial.reviewDate && (
-                                                    <p className="font-paragraph text-xs text-foreground/50 mt-1">
-                                                        {typeof testimonial.reviewDate === 'string'
-                                                            ? testimonial.reviewDate
-                                                            : format(new Date(testimonial.reviewDate), 'MMMM yyyy')}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </Motion.div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-20">
-                                <p className="font-paragraph text-lg text-foreground/60">
-                                    Testimonials coming soon
-                                </p>
-                            </div>
-                        )}
+                                        {testimonial.reviewDate && (
+                                            <p className="font-paragraph text-xs text-foreground/50 mt-1">
+                                                {testimonial.reviewDate}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            </Motion.div>
+                        ))}
                     </div>
                 </div>
             </section>

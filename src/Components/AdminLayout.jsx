@@ -42,7 +42,7 @@ export default function AdminLayout() {
 
     useEffect(() => {
         if (!AuthService.isAuthenticated()) {
-            navigate('/admin');
+            navigate('/admin/login');
         } else {
             fetchBlocks();
             fetchUnreadMessages();
@@ -83,7 +83,7 @@ export default function AdminLayout() {
 
     const handleLogout = () => {
         AuthService.logout();
-        navigate('/admin');
+        navigate('/admin/login');
     };
 
     const isActive = (path) => location.pathname === path;

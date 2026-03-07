@@ -1,40 +1,26 @@
-import { useEffect, useState } from 'react';
 import { motion as Motion } from 'framer-motion';
 import { CheckCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { BaseCrudService } from '@/integrations';
-import { format } from 'date-fns';
 import SEO from '@/components/SEO';
 
+const RULES = [
+    { _id: '1', category: 'General', policyTitle: 'Curfew Timing', policyDescription: 'Main gates close at 10:00 PM. Late entry requires prior permission from the warden. Repeat offenders will be fined.', effectiveDate: 'January 1, 2023' },
+    { _id: '2', category: 'Visitors', policyTitle: 'Visitor Policy', policyDescription: 'Visitors are allowed in the common area between 9:00 AM and 7:00 PM. No overnight stay for visitors.', effectiveDate: 'January 1, 2023' },
+    { _id: '3', category: 'Discipline', policyTitle: 'Anti-Ragging Policy', policyDescription: 'Zero tolerance for ragging. Any involvement will lead to immediate expulsion and police complaint.', effectiveDate: 'January 1, 2023' },
+    { _id: '4', category: 'Discipline', policyTitle: 'No Smoking/Alcohol', policyDescription: 'Possession or consumption of alcohol, drugs, or smoking items is strictly prohibited within hostel premises.', effectiveDate: 'January 1, 2023' },
+    { _id: '5', category: 'Payments', policyTitle: 'Fee Payment', policyDescription: 'Hostel fees must be paid by the 5th of every month. Late fee of ₹100/day applies thereafter.', effectiveDate: 'January 1, 2023' },
+    { _id: '6', category: 'Maintenance', policyTitle: 'Property Damage', policyDescription: 'Residents are responsible for room furniture. Any damage will be recovered from the security deposit.', effectiveDate: 'January 1, 2023' },
+];
+
 export default function RulesPage() {
-    const [policies, setPolicies] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        loadPolicies();
-    }, []);
-
-    const loadPolicies = async () => {
-        try {
-            const result = await BaseCrudService.getAll('rulesandpolicies');
-            const activePolicies = result.items.filter(p => p.isActive !== false);
-            setPolicies(activePolicies);
-        } catch (error) {
-            console.error('Failed to load policies:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const groupedPolicies = policies.reduce((acc, policy) => {
+    const groupedPolicies = RULES.reduce((acc, policy) => {
         const category = policy.category || 'General';
-        if (!acc[category]) {
-            acc[category] = [];
-        }
+        if (!acc[category]) acc[category] = [];
         acc[category].push(policy);
         return acc;
     }, {});
+
 
     return (
         <div className="min-h-screen bg-background">
@@ -89,7 +75,7 @@ export default function RulesPage() {
             <section className="w-full py-20">
                 <div className="max-w-[100rem] mx-auto px-8 md:px-20">
                     <div className="min-h-[400px]">
-                        {isLoading ? null : policies.length > 0 ? (
+                        {Object.keys(groupedPolicies).length > 0 ? (
                             <div className="space-y-16">
                                 {Object.keys(groupedPolicies).map((category) => (
                                     <Motion.div

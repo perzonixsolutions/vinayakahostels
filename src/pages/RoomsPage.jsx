@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Users, IndianRupee } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { BaseCrudService } from '@/integrations';
 import SEO from '@/components/SEO';
 
 export default function RoomsPage() {

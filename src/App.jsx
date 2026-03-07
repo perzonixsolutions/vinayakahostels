@@ -53,7 +53,7 @@ function App() {
             <Route path="/terms" element={<TermsOfServicePage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/testimonials" element={<TestimonialsPage />} />
-            <Route path="/admin" element={<AdminLoginPage />} />
+            <Route path="/admin/login" element={<AdminLoginPage />} />
 
             {/* Admin Routes with Layout */}
             <Route path="/admin" element={<AdminLayout />}>

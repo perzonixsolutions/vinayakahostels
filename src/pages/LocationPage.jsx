@@ -1,40 +1,25 @@
-import { useEffect, useState } from 'react';
 import { motion as Motion } from 'framer-motion';
-import { Image } from '@/components/ui/image';
 import { MapPin, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { BaseCrudService } from '@/integrations';
 import SEO from '@/components/SEO';
 
+const LANDMARKS = [
+    { _id: '1a', landmarkType: 'Education', landmarkName: 'SRM University', distanceFromHostel: '2km', description: 'Main road to SRM University', address: 'University Road', googleMapsUrl: 'https://maps.app.goo.gl/VbrCezxc4pQ34zWr9' },
+    { _id: '1b', landmarkType: 'Education', landmarkName: 'Amrita University', distanceFromHostel: '2km', description: 'Main road to Amrita University', address: 'University Road', googleMapsUrl: 'https://maps.app.goo.gl/pAimnTtZEAkToqWMA' },
+    { _id: '1c', landmarkType: 'Education', landmarkName: 'VIT University', distanceFromHostel: '5km', description: 'Main road to VIT University', address: 'University Road', googleMapsUrl: 'https://maps.app.goo.gl/GmLz7sc5gNxmaWzCA' },
+    { _id: '2', landmarkType: 'Transport', landmarkName: 'Auto/Taxi Stand', distanceFromHostel: '50m', description: 'Connects to all parts of the city.', address: '2km from SRM University Main Gate', googleMapsUrl: 'https://maps.app.goo.gl/QvdYmWJWJqv7z3tMA' },
+];
+
 export default function LocationPage() {
-    const [landmarks, setLandmarks] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        loadLandmarks();
-    }, []);
-
-    const loadLandmarks = async () => {
-        try {
-            const result = await BaseCrudService.getAll('nearbylandmarks');
-            setLandmarks(result.items);
-        } catch (error) {
-            console.error('Failed to load landmarks:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    const groupedLandmarks = landmarks.reduce((acc, landmark) => {
+    const groupedLandmarks = LANDMARKS.reduce((acc, landmark) => {
         const type = landmark.landmarkType || 'Other';
-        if (!acc[type]) {
-            acc[type] = [];
-        }
+        if (!acc[type]) acc[type] = [];
         acc[type].push(landmark);
         return acc;
     }, {});
+
 
     return (
         <div className="min-h-screen bg-background">
@@ -146,7 +131,7 @@ export default function LocationPage() {
                     </Motion.div>
 
                     <div className="min-h-[400px]">
-                        {isLoading ? null : landmarks.length > 0 ? (
+                        {Object.keys(groupedLandmarks).length > 0 ? (
                             <div className="space-y-16">
                                 {Object.keys(groupedLandmarks).map((type) => (
                                     <Motion.div

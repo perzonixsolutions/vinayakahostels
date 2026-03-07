@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { motion as Motion } from 'framer-motion';
 import {
     Accordion,
@@ -8,36 +8,29 @@ import {
 } from '@/components/ui/accordion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { BaseCrudService } from '@/integrations';
 import SEO from '@/components/SEO';
 
+const FAQS = [
+    { _id: '1', question: 'What is the curfew time?', answer: 'The curfew time is 10:00 PM for all residents. Late entry is only permitted with prior approval from the warden.', category: 'Rules', isFeatured: true },
+    { _id: '2', question: 'Is WiFi included in the fees?', answer: 'Yes, high-speed WiFi is included in the monthly hostel fee and is available 24/7 in all rooms and common areas.', category: 'Facilities', isFeatured: false },
+    { _id: '3', question: 'What happens if I fall ill?', answer: 'We have a first-aid kit available with the warden. For serious issues, we have a tie-up with a nearby hospital (1km away) for 24/7 emergency care.', category: 'General', isFeatured: true },
+    { _id: '4', question: 'Are visitors allowed?', answer: 'Yes, visitors (parents/guardians) are allowed in the visitor lounge between 9:00 AM and 7:00 PM. They are not permitted in student rooms.', category: 'Rules', isFeatured: true },
+    { _id: '5', question: 'How often are the rooms cleaned?', answer: 'Rooms are cleaned daily by our housekeeping staff. Bathrooms are cleaned twice a day.', category: 'Facilities', isFeatured: false },
+    { _id: '6', question: 'Is laundry service available?', answer: 'Yes, we have washing machines available for self-service. We also have a tie-up with a laundry service that collects clothes twice a week (charged separately).', category: 'Facilities', isFeatured: false },
+    { _id: '7', question: 'What kind of food is served?', answer: 'We serve healthy and hygienic vegetarian food. The menu changes weekly and includes breakfast, lunch, evening tea/snacks, and dinner.', category: 'Dining', isFeatured: true },
+    { _id: '8', question: 'Can I change my room later?', answer: 'Room changes are subject to availability and warden approval. A small administrative fee may apply.', category: 'Accommodation', isFeatured: false },
+    { _id: '9', question: 'Is there a security deposit?', answer: 'Yes, a refundable security deposit of ₹5,000 is required at the time of admission.', category: 'Booking', isFeatured: false },
+    { _id: '10', question: 'What is the procedure for vacating the hostel?', answer: 'Residents must give a 1-month notice before vacating. The security deposit will be refunded after room inspection.', category: 'Booking', isFeatured: false },
+];
+
 export default function FAQsPage() {
-    const [faqs, setFaqs] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState('All');
 
-    useEffect(() => {
-        loadFAQs();
-    }, []);
+    const categories = ['All', ...Array.from(new Set(FAQS.map(faq => faq.category).filter(Boolean)))];
 
-    const loadFAQs = async () => {
-        try {
-            const result = await BaseCrudService.getAll('faqs');
-            setFaqs(result.items);
-        } catch (error) {
-            console.error('Failed to load FAQs:', error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
+    const filteredFAQs = selectedCategory === 'All' ? FAQS : FAQS.filter(faq => faq.category === selectedCategory);
 
-    const categories = ['All', ...Array.from(new Set(faqs.map(faq => faq.category).filter(Boolean)))];
-
-    const filteredFAQs = selectedCategory === 'All'
-        ? faqs
-        : faqs.filter(faq => faq.category === selectedCategory);
-
-    const featuredFAQs = faqs.filter(faq => faq.isFeatured);
+    const featuredFAQs = FAQS.filter(faq => faq.isFeatured);
 
     return (
         <div className="min-h-screen bg-background">
@@ -153,7 +146,7 @@ export default function FAQsPage() {
                     </Motion.div>
 
                     <div className="min-h-[400px]">
-                        {isLoading ? null : filteredFAQs.length > 0 ? (
+                        {filteredFAQs.length > 0 ? (
                             <Motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
