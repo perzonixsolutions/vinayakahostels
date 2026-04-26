@@ -39,6 +39,13 @@ const queries = [
         capacity INT NOT NULL,
         current_occupancy INT DEFAULT 0,
         type VARCHAR(50) DEFAULT 'Non-AC',
+        name VARCHAR(255),
+        price_monthly INT,
+        price_semester INT,
+        image_url TEXT,
+        description TEXT,
+        amenities TEXT,
+        is_visible BOOLEAN DEFAULT 1,
         FOREIGN KEY(block_id) REFERENCES blocks(id),
         UNIQUE(block_id, room_number)
     )`,
@@ -80,6 +87,12 @@ const queries = [
         day_of_week VARCHAR(50),
         image TEXT,
         is_active BOOLEAN DEFAULT 1
+    )`,
+    `CREATE TABLE IF NOT EXISTS room_images (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        room_id INT,
+        image_url TEXT NOT NULL,
+        FOREIGN KEY(room_id) REFERENCES rooms(id) ON DELETE CASCADE
     )`
 ];
 

@@ -89,6 +89,13 @@ function initializeMySQL(pool) {
             capacity INT NOT NULL,
             current_occupancy INT DEFAULT 0,
             type VARCHAR(50) DEFAULT 'Non-AC',
+            name VARCHAR(255),
+            price_monthly INT,
+            price_semester INT,
+            image_url TEXT,
+            description TEXT,
+            amenities TEXT,
+            is_visible BOOLEAN DEFAULT 1,
             FOREIGN KEY(block_id) REFERENCES blocks(id),
             UNIQUE(block_id, room_number)
         )`,
@@ -138,6 +145,21 @@ function initializeMySQL(pool) {
             image TEXT NOT NULL,
             description TEXT,
             display_order INT DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )`,
+        `CREATE TABLE IF NOT EXISTS room_images (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            room_id INT,
+            image_url TEXT NOT NULL,
+            FOREIGN KEY(room_id) REFERENCES rooms(id) ON DELETE CASCADE
+        )`,
+        `CREATE TABLE IF NOT EXISTS transactions (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            type VARCHAR(50) NOT NULL,
+            category VARCHAR(100),
+            amount INT NOT NULL,
+            description TEXT,
+            date VARCHAR(50),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )`
     ];
@@ -190,6 +212,13 @@ function initializeSQLite(sqliteDb) {
             capacity INTEGER NOT NULL,
             current_occupancy INTEGER DEFAULT 0,
             type TEXT DEFAULT 'Non-AC',
+            name TEXT,
+            price_monthly INTEGER,
+            price_semester INTEGER,
+            image_url TEXT,
+            description TEXT,
+            amenities TEXT,
+            is_visible BOOLEAN DEFAULT 1,
             FOREIGN KEY(block_id) REFERENCES blocks(id),
             UNIQUE(block_id, room_number)
         )`);
@@ -255,6 +284,25 @@ function initializeSQLite(sqliteDb) {
             image TEXT NOT NULL,
             description TEXT,
             display_order INTEGER DEFAULT 0,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
+
+        // Create Room Images Table
+        sqliteDb.run(`CREATE TABLE IF NOT EXISTS room_images (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            room_id INTEGER,
+            image_url TEXT NOT NULL,
+            FOREIGN KEY(room_id) REFERENCES rooms(id) ON DELETE CASCADE
+        )`);
+
+        // Create Transactions Table
+        sqliteDb.run(`CREATE TABLE IF NOT EXISTS transactions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            type TEXT NOT NULL,
+            category TEXT,
+            amount INTEGER NOT NULL,
+            description TEXT,
+            date TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP
         )`);
     });

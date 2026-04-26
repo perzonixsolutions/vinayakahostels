@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Plus, Users, Bed, CreditCard, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Users, Bed, Trash2 } from 'lucide-react';
 import {
     Dialog,
     DialogContent,
@@ -14,6 +14,7 @@ import {
     DialogFooter,
     DialogClose
 } from "@/components/ui/dialog";
+import Carousel from '@/components/ui/carousel-custom';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -29,8 +30,6 @@ export default function AdminBlockDetailPage() {
     const getImageUrl = (imagePath) => {
         if (!imagePath) return null;
         if (imagePath.startsWith('http')) return imagePath;
-        // API_URL includes /api, but images are at root /uploads
-        // Remove /api from the end of API_URL
         const baseUrl = API_URL.replace(/\/api$/, '');
         return `${baseUrl}${imagePath}`;
     };
@@ -48,7 +47,7 @@ export default function AdminBlockDetailPage() {
         name: '',
         price_monthly: '',
         price_semester: '',
-        image: null,
+        images: [],
         description: '',
         amenities: '',
         is_visible: true
@@ -96,7 +95,12 @@ export default function AdminBlockDetailPage() {
 
             if (newRoom.price_monthly) formData.append('price_monthly', newRoom.price_monthly);
             if (newRoom.price_semester) formData.append('price_semester', newRoom.price_semester);
-            if (newRoom.image) formData.append('image', newRoom.image);
+            
+            if (newRoom.images && newRoom.images.length > 0) {
+                Array.from(newRoom.images).forEach(file => {
+                    formData.append('images', file);
+                });
+            }
 
             await axios.post(`${API_URL}/hostels/rooms`, formData, {
                 headers: {
@@ -112,7 +116,7 @@ export default function AdminBlockDetailPage() {
                 name: '',
                 price_monthly: '',
                 price_semester: '',
-                image: null,
+                images: [],
                 description: '',
                 amenities: '',
                 is_visible: true
@@ -240,13 +244,17 @@ export default function AdminBlockDetailPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="image">Room Image</Label>
+                                <Label htmlFor="images">Room Images (Select multiple)</Label>
                                 <Input
-                                    id="image"
+                                    id="images"
                                     type="file"
                                     accept="image/*"
-                                    onChange={(e) => setNewRoom({ ...newRoom, image: e.target.files[0] })}
+                                    multiple
+                                    onChange={(e) => setNewRoom({ ...newRoom, images: e.target.files })}
                                 />
+                                {newRoom.images && newRoom.images.length > 0 && (
+                                    <p className="text-xs text-gray-500">{newRoom.images.length} files selected</p>
+                                )}
                             </div>
 
                             <div className="space-y-2">
@@ -318,19 +326,10 @@ export default function AdminBlockDetailPage() {
                             </div>
                         </div>
 
-                        {room.image_url && (
-                            <div className="mb-3 w-full h-32 rounded-md overflow-hidden bg-gray-100">
-                                <img
-                                    src={getImageUrl(room.image_url)}
-                                    alt={room.room_number}
-                                    className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                        e.target.onerror = null;
-                                        e.target.src = 'https://via.placeholder.com/400x300?text=No+Image';
-                                    }}
-                                />
-                            </div>
-                        )}
+                        <Carousel 
+                            images={room.images ? room.images.map(img => getImageUrl(img)) : []} 
+                            className="mb-3 w-full h-32"
+                        />
 
                         <div className="flex items-center text-sm text-gray-600 mt-2">
                             <Users size={16} className="mr-2" />

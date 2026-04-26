@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion as Motion } from 'framer-motion';
-import { Image } from '@/components/ui/image';
 import { Button } from '@/components/ui/button';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Users, IndianRupee, ArrowLeft, CheckCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
+import Carousel from '@/components/ui/carousel-custom';
 
 export default function RoomDetailPage() {
     const { id } = useParams();
@@ -18,12 +18,12 @@ export default function RoomDetailPage() {
     useEffect(() => {
         const loadRoom = async () => {
             try {
-                // Determine if we are loading real data by ID (number) or mock data (string like '1a')
-                // But we are replacing fully.
                 const response = await fetch(`${API_URL}/${id}`);
                 if (!response.ok) throw new Error('Failed to fetch room');
                 const data = await response.json();
 
+                const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api$/, '');
+                
                 const mappedRoom = {
                     _id: data.id,
                     roomName: data.name || `Room ${data.room_number}`,
@@ -33,9 +33,9 @@ export default function RoomDetailPage() {
                     amenities: data.amenities,
                     pricePerMonth: data.price_monthly,
                     pricePerSemester: data.price_semester,
-                    roomPhotos: data.image_url ?
-                        (data.image_url.startsWith('http') ? data.image_url : `${import.meta.env.VITE_API_URL.replace(/\/api$/, '')}${data.image_url}`)
-                        : null,
+                    roomPhotos: data.images ? data.images.map(img => 
+                        img.startsWith('http') ? img : `${baseUrl}${img}`
+                    ) : [],
                 };
                 setRoom(mappedRoom);
             } catch (error) {
@@ -143,18 +143,18 @@ export default function RoomDetailPage() {
                                 </div>
                             </Motion.div>
 
-                            {/* Room Image */}
+                            {/* Room Image Carousel */}
                             <Motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6, delay: 0.2 }}
                                 className="aspect-[16/9] rounded-lg overflow-hidden shadow-xl"
                             >
-                                <Image
-                                    src={room.roomPhotos || 'https://static.wixstatic.com/media/0e16eb_f4f7fa4d202a480c88ad50855ab555a3~mv2.png?originWidth=1152&originHeight=640'}
-                                    alt={room.roomName || 'Room'}
-                                    className="w-full h-full object-cover"
-                                    width={1200}
+                                <Carousel 
+                                    images={room.roomPhotos} 
+                                    autoPlay={true}
+                                    interval={4000}
+                                    className="w-full h-full"
                                 />
                             </Motion.div>
 

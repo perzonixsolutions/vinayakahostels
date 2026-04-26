@@ -26,6 +26,8 @@ import AdminMenuPage from './pages/admin/AdminMenuPage'
 import AdminMessagesPage from './pages/admin/AdminMessagesPage'
 import AdminGalleryPage from './pages/admin/AdminGalleryPage'
 
+import AdminFinancePage from './pages/admin/AdminFinancePage'
+
 import { ScrollToTop } from './lib/scroll-to-top'
 
 import MaintenanceRoute from './components/MaintenanceRoute'
@@ -65,6 +67,7 @@ function App() {
               <Route path="menu" element={<AdminMenuPage />} />
               <Route path="gallery" element={<AdminGalleryPage />} />
               <Route path="messages" element={<AdminMessagesPage />} />
+              <Route path="finance" element={<AdminFinancePage />} />
             </Route>
           </Routes>
         </MaintenanceRoute>

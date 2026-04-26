@@ -15,9 +15,7 @@ router.get('/stats', verifyToken, (req, res) => {
         pendingFees: 0
     };
 
-    // Use Promise.all to run queries in parallel (simulated with callbacks here for SQLite)
-    // We'll nest them or use a serialized flow since sqlite3 is callback-based.
-
+    // Use Promise.all to run queries in parallel
     const queries = [
         // 1. Room Stats
         new Promise((resolve, reject) => {
@@ -32,14 +30,40 @@ router.get('/stats', verifyToken, (req, res) => {
                 }
             });
         }),
-        // 2. Student Stats
+        // 2. Student Stats (Active only)
         new Promise((resolve, reject) => {
-            db.get("SELECT COUNT(*) as count, SUM(fee_paid) as revenue, SUM(fee_due) as pending FROM students", (err, row) => {
+            db.get("SELECT COUNT(*) as count, SUM(fee_due) as pending FROM students WHERE status = 'Active'", (err, row) => {
                 if (err) reject(err);
                 else {
                     stats.totalStudents = row.count || 0;
-                    stats.revenue = row.revenue || 0;
                     stats.pendingFees = row.pending || 0;
+                    resolve();
+                }
+            });
+        }),
+        // 3. Student Revenue (All past & present students)
+        new Promise((resolve, reject) => {
+            db.get("SELECT SUM(fee_paid) as student_revenue FROM students", (err, row) => {
+                if (err) reject(err);
+                else {
+                    stats.revenue = row.student_revenue || 0;
+                    resolve();
+                }
+            });
+        }),
+        // 4. Transactions (Misc Income & Expenses)
+        new Promise((resolve, reject) => {
+            db.all("SELECT type, SUM(amount) as total FROM transactions GROUP BY type", [], (err, rows) => {
+                if (err) reject(err);
+                else {
+                    let miscIncome = 0;
+                    let expenses = 0;
+                    rows.forEach(r => {
+                        if (r.type === 'Income') miscIncome = r.total || 0;
+                        if (r.type === 'Expense') expenses = r.total || 0;
+                    });
+                    stats.revenue += miscIncome;
+                    stats.totalExpenses = expenses;
                     resolve();
                 }
             });
@@ -48,6 +72,8 @@ router.get('/stats', verifyToken, (req, res) => {
 
     Promise.all(queries)
         .then(() => {
+            // Calculate Net Profit
+            stats.netProfit = stats.revenue - (stats.totalExpenses || 0);
             res.json(stats);
         })
         .catch(err => {

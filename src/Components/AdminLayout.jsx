@@ -119,6 +119,16 @@ export default function AdminLayout() {
                             <span className="font-medium">Dashboard</span>
                         </Link>
 
+                        {/* Finance Section */}
+                        <Link
+                            to="/admin/finance"
+                            className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${isActive('/admin/finance') ? 'bg-primary/10 text-primary' : 'text-gray-600 hover:bg-gray-50'
+                                }`}
+                        >
+                            <CreditCard size={20} />
+                            <span className="font-medium">Finance & Expenses</span>
+                        </Link>
+
                         {/* Messages Section */}
                         <div>
                             <button

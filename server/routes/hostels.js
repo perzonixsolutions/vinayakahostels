@@ -23,27 +23,13 @@ router.post('/blocks', verifyToken, (req, res) => {
     });
 });
 
-// Get rooms for a block
-router.get('/blocks/:id/rooms', verifyToken, (req, res) => {
-    const blockId = req.params.id;
-    db.all("SELECT * FROM rooms WHERE block_id = ?", [blockId], (err, rows) => {
-        if (err) return res.status(500).json({ message: 'Database error' });
-        res.json(rows);
-    });
-});
-
 // Add a room
-router.post('/rooms', verifyToken, upload.single('image'), (req, res) => {
+router.post('/rooms', verifyToken, upload.array('images', 10), (req, res) => {
     const { block_id, room_number, capacity, type, name, price_monthly, price_semester, description, amenities, is_visible } = req.body;
 
-    let image_url = '';
-    if (req.file) {
-        image_url = `/uploads/${req.file.filename}`;
-    }
-
     const sql = `INSERT INTO rooms (
-        block_id, room_number, capacity, type, name, price_monthly, price_semester, image_url, description, amenities, is_visible
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        block_id, room_number, capacity, type, name, price_monthly, price_semester, description, amenities, is_visible
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
     const params = [
         block_id,
@@ -53,7 +39,6 @@ router.post('/rooms', verifyToken, upload.single('image'), (req, res) => {
         name,
         price_monthly,
         price_semester,
-        image_url,
         description,
         amenities,
         is_visible === 'true' || is_visible === true ? 1 : 0
@@ -61,16 +46,66 @@ router.post('/rooms', verifyToken, upload.single('image'), (req, res) => {
 
     db.run(sql, params, function (err) {
         if (err) {
-            if (err.message.includes('UNIQUE constraint failed')) {
+            if (err.message.includes('UNIQUE constraint failed') || err.message.includes('Duplicate entry')) {
                 return res.status(400).json({ message: 'Room number already exists in this block' });
             }
             return res.status(500).json({ message: 'Error adding room', error: err.message });
         }
-        res.status(201).json({ id: this.lastID, message: 'Room added successfully' });
+
+        const roomId = this.lastID;
+
+        // Add multiple images
+        if (req.files && req.files.length > 0) {
+            const imageQueries = req.files.map(file => {
+                const image_url = `/uploads/${file.filename}`;
+                return new Promise((resolve, reject) => {
+                    db.run("INSERT INTO room_images (room_id, image_url) VALUES (?, ?)", [roomId, image_url], (err) => {
+                        if (err) return reject(err);
+                        resolve();
+                    });
+                });
+            });
+
+            Promise.all(imageQueries)
+                .then(() => {
+                    res.status(201).json({ id: roomId, message: 'Room and images added successfully' });
+                })
+                .catch(imageErr => {
+                    res.status(201).json({ id: roomId, message: 'Room added, but some images failed to save', error: imageErr.message });
+                });
+        } else {
+            res.status(201).json({ id: roomId, message: 'Room added successfully (no images)' });
+        }
     });
 });
 
-// Get Public Rooms
+// Get rooms for a block with images
+router.get('/blocks/:id/rooms', verifyToken, (req, res) => {
+    const blockId = req.params.id;
+    const sql = "SELECT * FROM rooms WHERE block_id = ?";
+
+    db.all(sql, [blockId], (err, rooms) => {
+        if (err) return res.status(500).json({ message: 'Database error' });
+
+        // Get images for each room
+        const roomIds = rooms.map(r => r.id);
+        if (roomIds.length === 0) return res.json([]);
+
+        const placeholders = roomIds.map(() => '?').join(',');
+        db.all(`SELECT * FROM room_images WHERE room_id IN (${placeholders})`, roomIds, (err, images) => {
+            if (err) return res.status(500).json({ message: 'Error fetching room images' });
+
+            const roomsWithImages = rooms.map(room => ({
+                ...room,
+                images: images.filter(img => img.room_id === room.id).map(img => img.image_url)
+            }));
+
+            res.json(roomsWithImages);
+        });
+    });
+});
+
+// Get Public Rooms with images
 router.get('/public', (req, res) => {
     const sql = `
         SELECT rooms.*, blocks.name as block_name 
@@ -78,17 +113,27 @@ router.get('/public', (req, res) => {
         JOIN blocks ON rooms.block_id = blocks.id 
         WHERE is_visible = 1
     `;
-    db.all(sql, (err, rows) => {
+    db.all(sql, (err, rooms) => {
         if (err) return res.status(500).json({ message: 'Database error' });
 
-        // Map rows to match frontend structure if needed, or just return as is
-        // Frontend expects: _id (we send id), roomName (we send name), etc.
-        // We can do mapping here or in frontend. Let's send raw and handle mapping in frontend.
-        res.json(rows);
+        const roomIds = rooms.map(r => r.id);
+        if (roomIds.length === 0) return res.json([]);
+
+        const placeholders = roomIds.map(() => '?').join(',');
+        db.all(`SELECT * FROM room_images WHERE room_id IN (${placeholders})`, roomIds, (err, images) => {
+            if (err) return res.status(500).json({ message: 'Error fetching room images' });
+
+            const roomsWithImages = rooms.map(room => ({
+                ...room,
+                images: images.filter(img => img.room_id === room.id).map(img => img.image_url)
+            }));
+
+            res.json(roomsWithImages);
+        });
     });
 });
 
-// Get Single Public Room
+// Get Single Public Room with images
 router.get('/public/:id', (req, res) => {
     const id = req.params.id;
     const sql = `
@@ -97,10 +142,15 @@ router.get('/public/:id', (req, res) => {
         JOIN blocks ON rooms.block_id = blocks.id 
         WHERE rooms.id = ? AND is_visible = 1
     `;
-    db.get(sql, [id], (err, row) => {
+    db.get(sql, [id], (err, room) => {
         if (err) return res.status(500).json({ message: 'Database error' });
-        if (!row) return res.status(404).json({ message: 'Room not found' });
-        res.json(row);
+        if (!room) return res.status(404).json({ message: 'Room not found' });
+
+        db.all("SELECT image_url FROM room_images WHERE room_id = ?", [id], (err, images) => {
+            if (err) return res.status(500).json({ message: 'Error fetching room images' });
+            room.images = images.map(img => img.image_url);
+            res.json(room);
+        });
     });
 });
 

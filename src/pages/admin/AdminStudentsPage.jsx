@@ -3,7 +3,6 @@ import { useSearchParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { PlusCircle, Search } from 'lucide-react';
-import AuthService from '@/integrations/AuthService';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -13,23 +12,24 @@ export default function AdminStudentsPage() {
     const [searchParams] = useSearchParams();
     const statusFilter = searchParams.get('status');
     const [searchTerm, setSearchTerm] = useState('');
+    const [viewMode, setViewMode] = useState('active'); // 'active' or 'inactive'
 
     useEffect(() => {
         fetchStudents();
-    }, [statusFilter]);
+    }, [statusFilter, viewMode]);
 
     const fetchStudents = async () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
+            const apiStatus = viewMode === 'inactive' ? 'inactive' : statusFilter;
             const response = await axios.get(`${API_URL}/students`, {
-                params: { status: statusFilter },
+                params: { status: apiStatus },
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (Array.isArray(response.data)) {
                 setStudents(response.data);
             } else {
-                console.error('Invalid response format');
                 setStudents([]);
             }
         } catch (error) {
@@ -43,12 +43,10 @@ export default function AdminStudentsPage() {
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
 
-    // Room Assignment State
     const [blocks, setBlocks] = useState([]);
     const [rooms, setRooms] = useState([]);
     const [selectedBlock, setSelectedBlock] = useState('');
 
-    // Initial state for edit form
     const [editFormData, setEditFormData] = useState({
         name: '',
         email: '',
@@ -106,16 +104,7 @@ export default function AdminStudentsPage() {
             fee_paid: student.fee_paid,
             room_id: student.room_id || ''
         });
-        // If student has a room, try to pre-select block
-        // We need to know the block_id of the student's room. 
-        // The student object has block_name, but maybe not block_id?
-        // Let's check the API response for students. 
-        // It has students.*, rooms.room_number, blocks.name as block_name.
-        // It doesn't seem to have block_id. 
-        // We might need to fetch blocks and find the one matching block_name or update student fetch to include block_id.
-        // For now, let's just default to empty block and user has to re-select if they want to change room.
-        // OR better: Update fetchStudents to return block_id.
-        setSelectedBlock(''); // Reset for now.
+        setSelectedBlock('');
         setIsEditOpen(true);
     };
 
@@ -126,7 +115,7 @@ export default function AdminStudentsPage() {
             const token = localStorage.getItem('token');
             await axios.put(`${API_URL}/students/${editingStudent.id}`, {
                 ...editFormData,
-                rent_total: editFormData.fee_total, // Map back to backend expectation
+                rent_total: editFormData.fee_total,
                 rent_paid: editFormData.fee_paid
             }, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -141,6 +130,40 @@ export default function AdminStudentsPage() {
         }
     };
 
+    const handleCheckout = async (student) => {
+        if (!window.confirm(`Are you sure you want to checkout ${student.name}? This will mark them as inactive and free up their assigned bed.`)) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            await axios.put(`${API_URL}/students/${student.id}`, {
+                ...student,
+                room_id: null,
+                status: 'Inactive'
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchStudents();
+        } catch (error) {
+            console.error('Error checking out student:', error);
+            alert('Failed to checkout student');
+        }
+    };
+
+    const handleDeleteStudent = async (student) => {
+        if (!window.confirm(`Are you sure you want to PERMANENTLY delete student ${student.name}? This action cannot be undone.`)) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`${API_URL}/students/${student.id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            fetchStudents();
+        } catch (error) {
+            console.error('Error deleting student:', error);
+            alert(error.response?.data?.message || 'Failed to delete student');
+        }
+    };
+
     const filteredStudents = students.filter(student =>
         student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         student.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -148,9 +171,10 @@ export default function AdminStudentsPage() {
     );
 
     const getTitle = () => {
+        if (viewMode === 'inactive') return 'Past Students (Checked Out)';
         if (statusFilter === 'due') return 'Students with Rent Due';
         if (statusFilter === 'paid') return 'Students with Rent Paid';
-        return 'All Students';
+        return 'All Active Students';
     };
 
     return (
@@ -165,9 +189,24 @@ export default function AdminStudentsPage() {
                 </Link>
             </div>
 
-            {/* Search and Filters */}
-            <div className="bg-white p-4 rounded-lg shadow-sm border border-muted-grey flex items-center space-x-4">
-                <div className="relative flex-1 max-w-sm">
+            <div className="bg-white p-4 rounded-lg shadow-sm border border-muted-grey flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex space-x-2 w-full sm:w-auto">
+                    <Button
+                        variant={viewMode === 'active' ? 'default' : 'outline'}
+                        onClick={() => setViewMode('active')}
+                        className="flex-1 sm:flex-none"
+                    >
+                        Active Students
+                    </Button>
+                    <Button
+                        variant={viewMode === 'inactive' ? 'default' : 'outline'}
+                        onClick={() => setViewMode('inactive')}
+                        className="flex-1 sm:flex-none"
+                    >
+                        Past Students
+                    </Button>
+                </div>
+                <div className="relative w-full sm:max-w-sm">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
                     <input
                         type="text"
@@ -179,7 +218,6 @@ export default function AdminStudentsPage() {
                 </div>
             </div>
 
-            {/* Table */}
             <div className="bg-white rounded-lg shadow-sm border border-muted-grey overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
@@ -235,14 +273,34 @@ export default function AdminStudentsPage() {
                                             {new Date(student.join_date).toLocaleDateString()}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="text-blue-600"
-                                                onClick={() => handleEditClick(student)}
-                                            >
-                                                Edit
-                                            </Button>
+                                            <div className="flex space-x-2">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="text-blue-600 hover:text-blue-800"
+                                                    onClick={() => handleEditClick(student)}
+                                                >
+                                                    Edit
+                                                </Button>
+                                                {viewMode === 'active' && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="text-orange-600 hover:text-orange-800 hover:bg-orange-50"
+                                                        onClick={() => handleCheckout(student)}
+                                                    >
+                                                        Checkout
+                                                    </Button>
+                                                )}
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="text-red-600 hover:text-red-800 hover:bg-red-50"
+                                                    onClick={() => handleDeleteStudent(student)}
+                                                >
+                                                    Delete
+                                                </Button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))
@@ -252,7 +310,6 @@ export default function AdminStudentsPage() {
                 </div>
             </div>
 
-            {/* Edit Dialog */}
             {isEditOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto">
                     <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-xl max-h-[90vh] overflow-y-auto">
@@ -288,7 +345,6 @@ export default function AdminStudentsPage() {
                                 />
                             </div>
 
-                            {/* Room Assignment Section */}
                             <div className="border-t border-b py-4 space-y-3">
                                 <h3 className="font-medium text-sm text-gray-500">Room Reassignment</h3>
                                 <div>
@@ -298,7 +354,7 @@ export default function AdminStudentsPage() {
                                         value={selectedBlock}
                                         onChange={(e) => {
                                             setSelectedBlock(e.target.value);
-                                            setEditFormData({ ...editFormData, room_id: '' }); // Reset room when block changes
+                                            setEditFormData({ ...editFormData, room_id: '' });
                                         }}
                                     >
                                         <option value="">-- Select Block to Change Room --</option>

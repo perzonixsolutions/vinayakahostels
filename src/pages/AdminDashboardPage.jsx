@@ -109,23 +109,30 @@ export default function AdminDashboardPage() {
                     color="bg-red-400"
                 />
                 <StatCard
-                    title="This Month Revenue"
-                    value={`₹${stats.revenue.toLocaleString()}`}
-                    subtext="Rent collected"
+                    title="Total Revenue"
+                    value={`₹${(stats.revenue || 0).toLocaleString()}`}
+                    subtext="All Income"
                     icon={IndianRupee}
                     color="bg-emerald-600"
                 />
                 <StatCard
-                    title="Pending Fees"
-                    value={`₹${stats.pendingFees.toLocaleString()}`}
-                    subtext="Money not yet paid"
+                    title="Total Expenses"
+                    value={`₹${(stats.totalExpenses || 0).toLocaleString()}`}
+                    subtext="All Expenditures"
                     icon={AlertCircle}
-                    color="bg-orange-500"
+                    color="bg-red-500"
+                />
+                <StatCard
+                    title="Net Profit"
+                    value={`₹${(stats.netProfit || 0).toLocaleString()}`}
+                    subtext="Total Revenue - Total Expenses"
+                    icon={CheckCircle2}
+                    color="bg-green-600"
                 />
                 <StatCard
                     title="Pending Fees"
-                    value={`₹${stats.pendingFees.toLocaleString()}`}
-                    subtext="Money not yet paid"
+                    value={`₹${(stats.pendingFees || 0).toLocaleString()}`}
+                    subtext="From active students"
                     icon={AlertCircle}
                     color="bg-orange-500"
                 />

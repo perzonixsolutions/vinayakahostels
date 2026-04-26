@@ -32,6 +32,7 @@ app.use('/api/menu', require('./routes/menu'));
 app.use('/api/gallery', require('./routes/gallery'));
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/dashboard', require('./routes/dashboard'));
+app.use('/api/finance', require('./routes/finance'));
 
 // Health Check
 app.get('/', (req, res) => {

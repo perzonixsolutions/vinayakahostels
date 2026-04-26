@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { motion as Motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Image } from '@/components/ui/image';
 import { Button } from '@/components/ui/button';
 import { Users, IndianRupee } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
+import Carousel from '@/components/ui/carousel-custom';
 
 export default function RoomsPage() {
     const [rooms, setRooms] = useState([]);
@@ -22,10 +22,9 @@ export default function RoomsPage() {
             const response = await fetch(API_URL);
             if (!response.ok) throw new Error('Failed to fetch rooms');
             const data = await response.json();
-            // Map backend data to frontend structure if necessary, or ensure frontend uses backend keys
-            // Backend returns: id, name, image_url, price_monthly, etc.
-            // Frontend currently expects: _id, roomName, roomPhotos, pricePerMonth, etc.
-            // Let's map it here to minimize frontend template changes
+            
+            const baseUrl = import.meta.env.VITE_API_URL.replace(/\/api$/, '');
+
             const mappedRooms = data.map(room => ({
                 _id: room.id,
                 roomName: room.name || `Room ${room.room_number}`,
@@ -35,10 +34,9 @@ export default function RoomsPage() {
                 amenities: room.amenities,
                 pricePerMonth: room.price_monthly,
                 pricePerSemester: room.price_semester,
-                roomPhotos: room.image_url ?
-                    (room.image_url.startsWith('http') ? room.image_url : `${import.meta.env.VITE_API_URL.replace(/\/api$/, '')}${room.image_url}`)
-                    : null,
-                // Add any other mapped fields
+                roomPhotos: room.images ? room.images.map(img => 
+                    img.startsWith('http') ? img : `${baseUrl}${img}`
+                ) : [],
             }));
             setRooms(mappedRooms);
         } catch (error) {
@@ -93,7 +91,11 @@ export default function RoomsPage() {
             <section className="w-full py-16">
                 <div className="max-w-[100rem] mx-auto px-8 md:px-20">
                     <div className="min-h-[600px]">
-                        {isLoading ? null : rooms.length > 0 ? (
+                        {isLoading ? (
+                            <div className="flex items-center justify-center py-20">
+                                <LoadingSpinner />
+                            </div>
+                        ) : rooms.length > 0 ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {rooms.map((room, index) => (
                                     <Motion.div
@@ -102,31 +104,31 @@ export default function RoomsPage() {
                                         whileInView={{ opacity: 1, y: 0 }}
                                         viewport={{ once: true }}
                                         transition={{ duration: 0.6, delay: index * 0.1 }}
-                                        className="bg-white rounded-lg overflow-hidden border border-muted-grey hover:shadow-xl transition-shadow duration-300"
+                                        className="bg-white rounded-lg overflow-hidden border border-muted-grey hover:shadow-xl transition-shadow duration-300 flex flex-col"
                                     >
                                         <div className="aspect-[4/3] overflow-hidden">
-                                            <Image
-                                                src={room.roomPhotos || 'https://static.wixstatic.com/media/0e16eb_50bfa5e1bed64a3189571bb51bd1cbed~mv2.png?originWidth=576&originHeight=448'}
-                                                alt={room.roomName || 'Room'}
-                                                className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                                                width={600}
+                                            <Carousel 
+                                                images={room.roomPhotos} 
+                                                autoPlay={true}
+                                                interval={5000}
+                                                className="w-full h-full"
                                             />
                                         </div>
 
-                                        <div className="p-6 space-y-4">
+                                        <div className="p-6 space-y-4 flex-grow flex flex-col">
                                             <div className="flex items-start justify-between gap-4">
                                                 <h3 className="font-heading text-2xl text-foreground">
                                                     {room.roomName}
                                                 </h3>
                                                 {room.availabilityStatus && (
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-paragraph font-medium ${getStatusColor(room.availabilityStatus)}`}>
+                                                    <span className={`px-3 py-1 rounded-full text-xs font-paragraph font-medium flex-shrink-0 ${getStatusColor(room.availabilityStatus)}`}>
                                                         {room.availabilityStatus}
                                                     </span>
                                                 )}
                                             </div>
 
                                             {room.description && (
-                                                <p className="font-paragraph text-base text-foreground/70 leading-relaxed">
+                                                <p className="font-paragraph text-base text-foreground/70 leading-relaxed line-clamp-2">
                                                     {room.description}
                                                 </p>
                                             )}
@@ -140,14 +142,14 @@ export default function RoomsPage() {
 
                                             {room.amenities && (
                                                 <div className="pt-4 border-t border-muted-grey">
-                                                    <p className="font-paragraph text-sm text-foreground/60 mb-2">Amenities:</p>
-                                                    <p className="font-paragraph text-sm text-foreground/80">
+                                                    <p className="font-paragraph text-xs text-foreground/60 mb-2 uppercase tracking-wider">Amenities:</p>
+                                                    <p className="font-paragraph text-sm text-foreground/80 line-clamp-1">
                                                         {room.amenities}
                                                     </p>
                                                 </div>
                                             )}
 
-                                            <div className="pt-4 border-t border-muted-grey space-y-2">
+                                            <div className="mt-auto pt-4 border-t border-muted-grey space-y-2">
                                                 {room.pricePerMonth && (
                                                     <div className="flex items-center justify-between">
                                                         <span className="font-paragraph text-sm text-foreground/60">Per Month:</span>
@@ -159,24 +161,12 @@ export default function RoomsPage() {
                                                         </div>
                                                     </div>
                                                 )}
-                                                {room.pricePerSemester && (
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="font-paragraph text-sm text-foreground/60">Per Semester:</span>
-                                                        <div className="flex items-center gap-1">
-                                                            <IndianRupee className="w-4 h-4 text-primary" />
-                                                            <span className="font-paragraph text-lg font-semibold text-primary">
-                                                                {room.pricePerSemester.toLocaleString('en-IN')}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                )}
+                                                <Link to={`/rooms/${room._id}`} className="block pt-2">
+                                                    <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-paragraph font-medium">
+                                                        View Details
+                                                    </Button>
+                                                </Link>
                                             </div>
-
-                                            <Link to={`/rooms/${room._id}`}>
-                                                <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-paragraph font-medium mt-4">
-                                                    View Details
-                                                </Button>
-                                            </Link>
                                         </div>
                                     </Motion.div>
                                 ))}
@@ -253,6 +243,14 @@ export default function RoomsPage() {
             </section>
 
             <Footer />
+        </div>
+    );
+}
+
+function LoadingSpinner() {
+    return (
+        <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
         </div>
     );
 }
